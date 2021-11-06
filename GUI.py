@@ -10,15 +10,10 @@ from Flags import *
 from LoginWindow import LoginWindow
 from AddUpdateWindow import AddUpdateWindow
 
-database = sqlConnection()
-
-
-
-
 class GUI:
     app = None
     window = None
-    
+
     def __init__(self):
         self.app = QApplication(sys.argv)
         self.app.setStyle("Fusion")
@@ -29,12 +24,12 @@ class GUI:
     def initiateWindow(self):
         self.window = MainWindow()
         
-
-#look into tab change event
 class MainWindow(QMainWindow):
     userIDType = User.GUEST
     userID = None
     userName = None
+
+    database = None
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -42,8 +37,10 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("CS430 DB Access")
         self.stackedWidget.setCurrentIndex(self.userIDType.value)
 
+        self.database = sqlConnection()
+
         self.courses_table.setHorizontalHeaderLabels(['Course ID', 'Department', 'Course Name', 'Instructor', 'Meeting Time', 'Room', 'Currently Enrolled', 'Capacity']) 
-        database.queryStudentCourses()
+        self.database.queryStudentCourses()
         self._populateTable(self.courses_table, 8)
 
         self._setupStudent()
@@ -55,7 +52,7 @@ class MainWindow(QMainWindow):
         
     def _populateTable(self, table, columns):
         currRow = 0
-        for row in database.cursor:
+        for row in self.database.cursor:
             if row == None:
                 break
             currRow += 1
@@ -72,49 +69,49 @@ class MainWindow(QMainWindow):
 
     def _loadTables(self): #maybe put headers in setup
         def loadStudent():            
-            database.queryStudentCourses()
+            self.database.queryStudentCourses()
             self._populateTable(self.student_courses_table, 8)
 
-            database.queryStudentMyCourses(self.userID)
+            self.database.queryStudentMyCourses(self.userID)
             self._populateTable(self.student_mycourses_table, 7)
         
         def loadFaculty():
-            database.queryStudent()
+            self.database.queryStudent()
             self._populateTable(self.faculty_student_table, 5)
 
-            database.queryCourses()
+            self.database.queryCourses()
             self._populateTable(self.faculty_courses_table, 6)
             
-            database.queryEnrolled()
+            self.database.queryEnrolled()
             self._populateTable(self.faculty_enrolled_table, 5)
             
-            database.queryFaculty()
+            self.database.queryFaculty()
             self._populateTable(self.faculty_faculty_table, 3)
             
-            database.queryStaff()
+            self.database.queryStaff()
             self._populateTable(self.faculty_staff_table, 3)
             
-            database.queryDepartment()
+            self.database.queryDepartment()
             self._populateTable(self.faculty_department_table, 2)
 
         def loadStaff():
-            database.queryStudent()
+            self.database.queryStudent()
             self._populateTable(self.staff_student_table, 5)
 
 
-            database.queryCourses()
+            self.database.queryCourses()
             self._populateTable(self.staff_courses_table, 6)
             
-            database.queryEnrolled()
+            self.database.queryEnrolled()
             self._populateTable(self.staff_enrolled_table, 5)
             
-            database.queryFaculty()
+            self.database.queryFaculty()
             self._populateTable(self.staff_faculty_table, 3)
             
-            database.queryStaff()
+            self.database.queryStaff()
             self._populateTable(self.staff_staff_table, 3)
             
-            database.queryDepartment()
+            self.database.queryDepartment()
             self._populateTable(self.staff_department_table, 2)
         
         if (self.userIDType == User.STAFF):
@@ -124,7 +121,7 @@ class MainWindow(QMainWindow):
         elif (self.userIDType == User.STUDENT):
             loadStudent()
         elif (self.userIDType == User.GUEST):
-            database.queryStudentCourses()
+            self.database.queryStudentCourses()
             self._populateTable(self.courses_table, 8)
             
         
@@ -198,14 +195,16 @@ class MainWindow(QMainWindow):
         self._loadTables()
 
         print("EXECUTED LOGOUT")
+
     def executeGuestSearch(self):
         string = self.search_bar.text()
         if string == "":
             self._loadTables()
             return
-        database.searchStudentCourses(string)
+        self.database.searchStudentCourses(string)
         self._populateTable(self.courses_table, 8)
         return
+
     def executeStudentSearch(self):
         string = self.student_search_bar.text()
         if string == "":
@@ -213,10 +212,10 @@ class MainWindow(QMainWindow):
             return
         curr_tab = self.student_tabs.currentIndex()
         if (curr_tab == 0):
-            database.searchStudentCourses(string)
+            self.database.searchStudentCourses(string)
             self._populateTable(self.student_courses_table, 8)
         elif (curr_tab == 1):
-            database.searchStudentMyCourses(self.userID, string)
+            self.database.searchStudentMyCourses(self.userID, string)
             self._populateTable(self.student_mycourses_table, 7)
         return
 
@@ -227,22 +226,22 @@ class MainWindow(QMainWindow):
             return
         curr_tab = self.staff_tabs.currentIndex()
         if (curr_tab == 0):
-            database.searchStudent(string)
+            self.database.searchStudent(string)
             self._populateTable(self.staff_student_table, 5)
         elif (curr_tab == 1):
-            database.searchCourses(string)
+            self.database.searchCourses(string)
             self._populateTable(self.staff_courses_table, 6)
         elif (curr_tab == 2):
-            database.searchEnrolled(string)
+            self.database.searchEnrolled(string)
             self._populateTable(self.staff_enrolled_table, 5)
         elif (curr_tab == 3):
-            database.searchFaculty(string)
+            self.database.searchFaculty(string)
             self._populateTable(self.staff_faculty_table, 3)
         elif (curr_tab == 4):
-            database.searchStaff(string)
+            self.database.searchStaff(string)
             self._populateTable(self.staff_staff_table, 3)
         elif (curr_tab == 5):
-            database.searchDepartment(string)
+            self.database.searchDepartment(string)
             self._populateTable(self.staff_department_table, 2)
         return
     
@@ -254,22 +253,22 @@ class MainWindow(QMainWindow):
         curr_tab = self.faculty_tabs.currentIndex()
         print(curr_tab)
         if (curr_tab == 0):
-            database.searchStudent(string)
+            self.database.searchStudent(string)
             self._populateTable(self.faculty_student_table, 5)
         elif (curr_tab == 1):
-            database.searchCourses(string)
+            self.database.searchCourses(string)
             self._populateTable(self.faculty_courses_table, 6)
         elif (curr_tab == 2):
-            database.searchEnrolled(string)
+            self.database.searchEnrolled(string)
             self._populateTable(self.faculty_enrolled_table, 5)
         elif (curr_tab == 3):
-            database.searchFaculty(string)
+            self.database.searchFaculty(string)
             self._populateTable(self.faculty_faculty_table, 3)
         elif (curr_tab == 4):
-            database.searchStaff(string)
+            self.database.searchStaff(string)
             self._populateTable(self.faculty_staff_table, 3)
         elif (curr_tab == 5):
-            database.searchDepartment(string)
+            self.database.searchDepartment(string)
             self._populateTable(self.faculty_department_table, 2)
         return
 
@@ -278,7 +277,7 @@ class MainWindow(QMainWindow):
         try:
             record = self._fetchTableRow(table)
             updatedRecord = [self.userID, record[0], 'NULL', 'NULL', 'NULL']
-            if (database.checkIDExists("Enrolled", self.userID, record[0])):
+            if (self.database.checkIDExists("Enrolled", self.userID, record[0])):
                 QMessageBox.warning(self, 'Error', 'You are already enrolled in that course.')
                 return    
             if (record[6] == record[7]):
@@ -290,11 +289,11 @@ class MainWindow(QMainWindow):
             if response == qm.No:
                 return
 
-            database.insertEntry("Enrolled", updatedRecord)
+            self.database.insertEntry("Enrolled", updatedRecord)
         except:
             QMessageBox.warning(self, 'Error', 'A row must be selected.')
             return
-        database.cnx.commit()
+        self.database.cnx.commit()
         self._loadTables()
         return
     #
@@ -312,20 +311,20 @@ class MainWindow(QMainWindow):
         record[:] = ["NULL" if x == '' else x for x in record]
         try:
             if (curr_tab == 0):
-                database.insertEntry("Student", record)
+                self.database.insertEntry("Student", record)
             elif (curr_tab == 1):
-                database.insertEntry("Courses", record)
+                self.database.insertEntry("Courses", record)
             elif (curr_tab == 2):
-                database.insertEntry("Enrolled", record)
+                self.database.insertEntry("Enrolled", record)
             elif (curr_tab == 3):
-                database.insertEntry("Faculty", record)
+                self.database.insertEntry("Faculty", record)
             elif (curr_tab == 4):
-                database.insertEntry("Staff", record)
+                self.database.insertEntry("Staff", record)
             elif (curr_tab == 5):
-                database.insertEntry("Department", record)
+                self.database.insertEntry("Department", record)
         except:
             QMessageBox.warning(self, 'Error', 'Something went wrong.')
-        database.cnx.commit()
+        self.database.cnx.commit()
         self._loadTables()
         return
 
@@ -341,36 +340,36 @@ class MainWindow(QMainWindow):
                 table = self.staff_student_table
                 record = self._fetchTableRow(table)
 
-                database.deleteEntry("Student", "sid", record[0])
+                self.database.deleteEntry("Student", "sid", record[0])
             elif (curr_tab == 1):
                 table = self.staff_courses_table
                 record = self._fetchTableRow(table)
 
-                database.deleteEntry("Courses", "cid", "'" + record[0] + "'")
+                self.database.deleteEntry("Courses", "cid", "'" + record[0] + "'")
             elif (curr_tab == 2):
                 table = self.staff_enrolled_table
                 record = self._fetchTableRow(table)
 
-                database.deleteEntry("Enrolled", record[0], record[1])
+                self.database.deleteEntry("Enrolled", record[0], record[1])
             elif (curr_tab == 3):
                 table = self.staff_faculty_table
                 record = self._fetchTableRow(table)
                 
-                database.deleteEntry("Faculty", "fid", record[0])
+                self.database.deleteEntry("Faculty", "fid", record[0])
             elif (curr_tab == 4):
                 table = self.staff_staff_table
                 record = self._fetchTableRow(table)
                 
-                database.deleteEntry("Staff", "sid", record[0])
+                self.database.deleteEntry("Staff", "sid", record[0])
             elif (curr_tab == 5):
                 table = self.staff_department_table
                 record = self._fetchTableRow(table)
                 
-                database.deleteEntry("Department", "did", record[0])
+                self.database.deleteEntry("Department", "did", record[0])
         except:
             QMessageBox.warning(self, 'Error', 'A row must be selected.')
             return
-        database.cnx.commit()
+        self.database.cnx.commit()
         self._loadTables()
         return
 
@@ -416,20 +415,20 @@ class MainWindow(QMainWindow):
         print("Starting")
         try:
             if (curr_tab == 0):
-                database.updateEntry("Student", updatedRecord)
+                self.database.updateEntry("Student", updatedRecord)
             elif (curr_tab == 1):
-                database.updateEntry("Courses", updatedRecord)
+                self.database.updateEntry("Courses", updatedRecord)
             elif (curr_tab == 2):
-                database.updateEntry("Enrolled", updatedRecord)
+                self.database.updateEntry("Enrolled", updatedRecord)
             elif (curr_tab == 3):
-                database.updateEntry("Faculty", updatedRecord)
+                self.database.updateEntry("Faculty", updatedRecord)
             elif (curr_tab == 4):
-                database.updateEntry("Staff", updatedRecord)
+                self.database.updateEntry("Staff", updatedRecord)
             elif (curr_tab == 5):
-                database.updateEntry("Department", updatedRecord)
+                self.database.updateEntry("Department", updatedRecord)
         except:
             QMessageBox.warning(self, 'Error', 'Something went wrong.')
-        database.cnx.commit()
+        self.database.cnx.commit()
         self._loadTables()
         return
         
@@ -439,7 +438,7 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, e):
         print("Connection Closed")
-        database.closeConnection()
+        self.database.closeConnection()
         print(self.userIDType)
         print(self.userName)
 
