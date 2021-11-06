@@ -30,6 +30,7 @@ class AddUpdateWindow(QDialog):
      
     def _setupValidator(self):
         names_rx = QRegExp("^[A-Za-z]+((\s)?([A-Za-z])+)*$") #names ##### MAKE VALIDATORS LIMITED TO SPACE IN DB
+        course_names_rx = QRegExp("^[A-Za-z]+((\s)?([A-Za-z0-9])+)*$")
         alpha_rx = QRegExp("^[A-Za-z0-9]+$")
 
         self.student_sid.setValidator(QIntValidator(100, 199, self.student_sid))
@@ -38,7 +39,7 @@ class AddUpdateWindow(QDialog):
         self._populateMajors()
         
         self.courses_cid.setValidator(QRegExpValidator(alpha_rx, self.courses_cid))
-        self.courses_cname.setValidator(QRegExpValidator(names_rx, self.courses_cname))
+        self.courses_cname.setValidator(QRegExpValidator(course_names_rx, self.courses_cname))
         self.courses_room.setValidator(QRegExpValidator(alpha_rx, self.courses_room))
         self.courses_fid.setValidator(QIntValidator(200, 299, self.courses_fid))
         self.courses_limitnum.setValidator(QIntValidator(1, 100, self.courses_limitnum))

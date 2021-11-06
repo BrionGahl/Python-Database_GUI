@@ -41,12 +41,55 @@ class sqlConnection:
 #  Student Queries
 #
     def queryStudentCourses(self):
-        query = ("SELECT c.cid, d.dname, c.cname, f.fname, c.meets_at, c.room, e.num, c.limit_num FROM Courses c, Department d, Faculty f, (SELECT Courses.cid, COUNT(sid) AS num FROM Courses LEFT JOIN Enrolled ON Courses.cid = Enrolled.cid GROUP BY cid) as e WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did;")
+        query = ("SELECT c.cid, d.dname, c.cname, f.fname, c.meets_at, c.room, e.num, c.limit_num "
+                 "FROM Courses c, Department d, Faculty f, (SELECT Courses.cid, COUNT(sid) AS num FROM Courses LEFT JOIN Enrolled ON Courses.cid = Enrolled.cid GROUP BY cid) as e "
+                 "WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did;")
         self._cursor.execute(query)
     def queryStudentMyCourses(self, id):
         query = ("SELECT c.cid, d.dname, c.cname, f.fname, e.exam1, e.exam2, e.final FROM Courses c, Department d, Faculty f, Enrolled e WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND e.sid = %s" % (id))
         self._cursor.execute(query)
-
+    def searchStudentCourses(self, string):
+        query = """SELECT c.cid, d.dname, c.cname, f.fname, c.meets_at, c.room, e.num, c.limit_num 
+        FROM Courses c, Department d, Faculty f, (SELECT Courses.cid, COUNT(sid) AS num FROM Courses LEFT JOIN Enrolled ON Courses.cid = Enrolled.cid GROUP BY cid) as e 
+        WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND d.dname LIKE '%s%%' 
+        UNION 
+        SELECT c.cid, d.dname, c.cname, f.fname, c.meets_at, c.room, e.num, c.limit_num 
+        FROM Courses c, Department d, Faculty f, (SELECT Courses.cid, COUNT(sid) AS num FROM Courses LEFT JOIN Enrolled ON Courses.cid = Enrolled.cid GROUP BY cid) as e 
+        WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND c.cname LIKE '%s%%' 
+        UNION 
+        SELECT c.cid, d.dname, c.cname, f.fname, c.meets_at, c.room, e.num, c.limit_num 
+        FROM Courses c, Department d, Faculty f, (SELECT Courses.cid, COUNT(sid) AS num FROM Courses LEFT JOIN Enrolled ON Courses.cid = Enrolled.cid GROUP BY cid) as e 
+        WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND f.fname LIKE '%s%%' 
+        UNION 
+        SELECT c.cid, d.dname, c.cname, f.fname, c.meets_at, c.room, e.num, c.limit_num 
+        FROM Courses c, Department d, Faculty f, (SELECT Courses.cid, COUNT(sid) AS num FROM Courses LEFT JOIN Enrolled ON Courses.cid = Enrolled.cid GROUP BY cid) as e 
+        WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND c.meets_at LIKE '%s%%' 
+        UNION 
+        SELECT c.cid, d.dname, c.cname, f.fname, c.meets_at, c.room, e.num, c.limit_num 
+        FROM Courses c, Department d, Faculty f, (SELECT Courses.cid, COUNT(sid) AS num FROM Courses LEFT JOIN Enrolled ON Courses.cid = Enrolled.cid GROUP BY cid) as e 
+        WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND c.room LIKE '%s%%' 
+        UNION 
+        SELECT c.cid, d.dname, c.cname, f.fname, c.meets_at, c.room, e.num, c.limit_num 
+        FROM Courses c, Department d, Faculty f, (SELECT Courses.cid, COUNT(sid) AS num FROM Courses LEFT JOIN Enrolled ON Courses.cid = Enrolled.cid GROUP BY cid) as e 
+        WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND c.cid = '%s';""" % (string, string, string, string, string, string)
+        self._cursor.execute(query)
+    def searchStudentMyCourses(self, id, string):
+        query = """SELECT c.cid, d.dname, c.cname, f.fname, e.exam1, e.exam2, e.final 
+        FROM Courses c, Department d, Faculty f, Enrolled e 
+        WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND e.sid = %s AND c.cid = '%s' 
+        UNION 
+        SELECT c.cid, d.dname, c.cname, f.fname, e.exam1, e.exam2, e.final 
+        FROM Courses c, Department d, Faculty f, Enrolled e 
+        WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND e.sid = %s AND d.dname LIKE '%s%%' 
+        UNION 
+        SELECT c.cid, d.dname, c.cname, f.fname, e.exam1, e.exam2, e.final 
+        FROM Courses c, Department d, Faculty f, Enrolled e 
+        WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND e.sid = %s AND c.cname LIKE '%s%%' 
+        UNION 
+        SELECT c.cid, d.dname, c.cname, f.fname, e.exam1, e.exam2, e.final 
+        FROM Courses c, Department d, Faculty f, Enrolled e 
+        WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND e.sid = %s AND f.fname LIKE '%s%%';""" % (id, string, id, string, id, string, id, string)
+        self._cursor.execute(query)
 #
 #  Staff and Faculty Queries
 #
@@ -67,6 +110,77 @@ class sqlConnection:
         self._cursor.execute(query)
     def queryDepartment(self):
         query = ("SELECT * FROM Department;")
+        self._cursor.execute(query)
+
+    def searchStudent(self, string):
+        if " " in string:
+            query = """SELECT * FROM Student WHERE sname LIKE '%s%%' 
+            UNION 
+            SELECT * FROM Student WHERE major LIKE '%s%%' 
+            UNION 
+            SELECT * FROM Student WHERE s_level LIKE '%s%%';""" % (string, string, string)
+        elif (string.isdigit()):
+            query = """SELECT * FROM Student WHERE sid = %s 
+            UNION 
+            SELECT * FROM Student WHERE age = %s;""" % (string, string)
+        else:
+            query = """SELECT * FROM Student WHERE sname LIKE '%s%%' 
+            UNION 
+            SELECT * FROM Student WHERE major LIKE '%s%%' 
+            UNION 
+            SELECT * FROM Student WHERE s_level LIKE '%s%%';""" % (string, string, string)
+        self._cursor.execute(query)
+    def searchCourses(self, string):
+        if " " in string:
+            query = """
+            SELECT * FROM Courses WHERE cname LIKE '%s%%' 
+            UNION 
+            SELECT * FROM Courses WHERE meets_at LIKE '%s%%' 
+            UNION 
+            SELECT * FROM Courses WHERE room LIKE '%s%%';""" % (string, string, string)
+        elif (string.isdigit()):
+            query = """SELECT * FROM Courses WHERE fid = %s 
+            UNION 
+            SELECT * FROM Courses WHERE limit_num = %s;""" % (string, string)
+        else:
+            query = """SELECT * FROM Courses WHERE cid = '%s' 
+            UNION 
+            SELECT * FROM Courses WHERE cname LIKE '%s%%' 
+            UNION 
+            SELECT * FROM Courses WHERE meets_at LIKE '%s%%' 
+            UNION 
+            SELECT * FROM Courses WHERE room LIKE '%s%%';""" % (string, string, string, string)
+        self._cursor.execute(query)
+    def searchEnrolled(self, string):
+        if " " in string:
+            return
+        query = """SELECT * FROM Enrolled WHERE sid = %s 
+        UNION 
+        SELECT * FROM Enrolled WHERE cid = '%s' 
+        UNION 
+        SELECT * FROM Enrolled WHERE exam1 = %s 
+        UNION 
+        SELECT * FROM Enrolled WHERE exam2 = %s 
+        UNION 
+        SELECT * FROM Enrolled WHERE final = %s;""" % (string, string, string, string, string)
+        self._cursor.execute(query)
+    def searchFaculty(self, string):
+        if (string.isdigit()):
+            query = """SELECT * FROM Faculty WHERE fid = %s UNION SELECT * FROM Faculty where deptid = %s;""" % (string, string)
+        else:
+            query = """SELECT * FROM Faculty where fname LIKE '%s%%';""" % (string)
+        self._cursor.execute(query)
+    def searchStaff(self, string):
+        if (string.isdigit()):
+            query = """SELECT * FROM Staff where sid = %s UNION SELECT * FROM Staff where deptid = %s;""" % (string, string)
+        else:
+            query = """SELECT * FROM Staff where sname LIKE '%s%%';""" % (string)
+        self._cursor.execute(query)
+    def searchDepartment(self, string):
+        if (string.isdigit()):
+            query = "SELECT * FROM Department where did = %s;" % (string)
+        else:
+            query = "SELECT * FROM Department where dname LIKE '%s%%';" % (string) 
         self._cursor.execute(query)
 
 #
