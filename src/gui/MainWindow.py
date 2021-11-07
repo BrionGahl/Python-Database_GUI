@@ -1,14 +1,17 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
-from PyQt5.QtGui import QIntValidator, QRegExpValidator
+from PyQt5.QtGui import QColor, QIntValidator, QPalette, QRegExpValidator
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import sys
-from SQL import sqlConnection
-from Flags import *
+from sql.SQL import sqlConnection
+from gui.Flags import *
+from os import path
 
-from LoginWindow import LoginWindow
-from AddUpdateWindow import AddUpdateWindow
+from gui.LoginWindow import LoginWindow
+from gui.AddUpdateWindow import AddUpdateWindow
+
+PATH = path.dirname(path.abspath(__file__))
 
 class GUI:
     app = None
@@ -16,13 +19,36 @@ class GUI:
 
     def __init__(self):
         self.app = QApplication(sys.argv)
-        self.app.setStyle("Fusion")
+        
+        self.initStyle()
+
         self.window = MainWindow()
         self.window.show()
         sys.exit(self.app.exec_())
         
-    def initiateWindow(self):
-        self.window = MainWindow()
+    def initStyle(self):
+        self.app.setStyle("Fusion")
+
+        darkPalette = QPalette()
+
+        darkPalette.setColor(QPalette.Window, QColor(53, 53, 53))
+        darkPalette.setColor(QPalette.WindowText, Qt.white)
+        darkPalette.setColor(QPalette.Base, QColor(25, 25, 25))
+        darkPalette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
+        darkPalette.setColor(QPalette.ToolTipBase, Qt.white)
+        darkPalette.setColor(QPalette.ToolTipText, Qt.white)
+        darkPalette.setColor(QPalette.Text, Qt.white)
+        darkPalette.setColor(QPalette.Button, QColor(53, 53, 53))
+        darkPalette.setColor(QPalette.ButtonText, Qt.white)
+        darkPalette.setColor(QPalette.BrightText, Qt.red)
+        darkPalette.setColor(QPalette.Link, QColor(42, 130, 218))
+        darkPalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+        darkPalette.setColor(QPalette.HighlightedText, Qt.black)
+
+        self.app.setPalette(darkPalette)
+
+        self.app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
+
         
 class MainWindow(QMainWindow):
     userIDType = User.GUEST
@@ -33,22 +59,22 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        uic.loadUi('MainUI_temp_stacked.ui', self)
+        uic.loadUi(path.join(PATH, '../../assets/ui/MainUI.ui'), self)
         self.setWindowTitle("CS430 DB Access")
         self.stackedWidget.setCurrentIndex(self.userIDType.value)
 
         self.database = sqlConnection()
 
-        self.courses_table.setHorizontalHeaderLabels(['Course ID', 'Department', 'Course Name', 'Instructor', 'Meeting Time', 'Room', 'Currently Enrolled', 'Capacity']) 
-        self.database.queryStudentCourses()
-        self._populateTable(self.courses_table, 8)
-
+        self._setupGuest()
         self._setupStudent()
         self._setupFaculty()
         self._setupStaff()
 
         self.search_button.clicked.connect(self.executeGuestSearch)
         self.login_button.clicked.connect(self.executeLogin)
+
+        self.database.queryStudentCourses()
+        self._populateTable(self.courses_table, 8)
         
     def _populateTable(self, table, columns):
         currRow = 0
@@ -132,10 +158,39 @@ class MainWindow(QMainWindow):
         for i in range(table.columnCount()):
             row.append(table.item(selected.row(), i).text())
         return row
+    def _setupGuest(self):
+        self.courses_table.setHorizontalHeaderLabels(['Course ID', 'Department', 'Course Name', 'Instructor', 'Meeting Time', 'Room', 'Currently Enrolled', 'Capacity']) 
+        header = self.courses_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(6, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(7, QtWidgets.QHeaderView.ResizeToContents)
 
     def _setupStudent(self):
         self.student_courses_table.setHorizontalHeaderLabels(['Course ID', 'Department', 'Course Name', 'Instructor', 'Meeting Time', 'Room', 'Currently Enrolled', 'Capacity'])
+        header = self.student_courses_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(6, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(7, QtWidgets.QHeaderView.ResizeToContents)
+
         self.student_mycourses_table.setHorizontalHeaderLabels(['Course ID', 'Department', 'Course Name', 'Instructor', 'Exam 1', 'Exam 2', 'Final'])
+        header = self.student_mycourses_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(6, QtWidgets.QHeaderView.ResizeToContents)
 
         self.student_logout_button.clicked.connect(self.executeLogout)
         self.student_enroll_button.clicked.connect(self.executeEnroll)
@@ -143,22 +198,92 @@ class MainWindow(QMainWindow):
 
     def _setupFaculty(self):
         self.faculty_student_table.setHorizontalHeaderLabels(['Student ID', 'Student Name', 'Major', 'Level', 'Age'])
+        header = self.faculty_student_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+
         self.faculty_courses_table.setHorizontalHeaderLabels(['Course ID', 'Course Name', 'Meeting Time', 'Room', 'Faculty ID', 'Capacity'])
+        header = self.faculty_courses_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
+
         self.faculty_enrolled_table.setHorizontalHeaderLabels(['Student ID', 'Course ID', 'Exam 1', 'Exam 2', 'Final'])
+        header = self.faculty_enrolled_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+
         self.faculty_faculty_table.setHorizontalHeaderLabels(['Faculty ID', 'Faculty Name', 'Department ID'])
+        header = self.faculty_faculty_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+
         self.faculty_staff_table.setHorizontalHeaderLabels(['Staff ID', 'Staff Name', 'Department ID'])
+        header = self.faculty_staff_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+
         self.faculty_department_table.setHorizontalHeaderLabels(['Department ID', 'Department Name'])
+        header = self.faculty_department_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
         self.faculty_logout_button.clicked.connect(self.executeLogout)
         self.faculty_search_button.clicked.connect(self.executeFacultySearch)
 
     def _setupStaff(self): 
         self.staff_student_table.setHorizontalHeaderLabels(['Student ID', 'Student Name', 'Major', 'Level', 'Age'])
+        header = self.staff_student_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+
         self.staff_courses_table.setHorizontalHeaderLabels(['Course ID', 'Course Name', 'Meeting Time', 'Room', 'Faculty ID', 'Capacity'])
+        header = self.staff_courses_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
+
         self.staff_enrolled_table.setHorizontalHeaderLabels(['Student ID', 'Course ID', 'Exam 1', 'Exam 2', 'Final'])
+        header = self.staff_enrolled_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+
         self.staff_faculty_table.setHorizontalHeaderLabels(['Faculty ID', 'Faculty Name', 'Department ID'])
+        header = self.staff_faculty_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+
         self.staff_staff_table.setHorizontalHeaderLabels(['Staff ID', 'Staff Name', 'Department ID'])
+        header = self.staff_staff_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+
         self.staff_department_table.setHorizontalHeaderLabels(['Department ID', 'Department Name'])
+        header = self.staff_department_table.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
         self.staff_logout_button.clicked.connect(self.executeLogout)
         self.staff_add_button.clicked.connect(self.executeAdd)
@@ -187,6 +312,11 @@ class MainWindow(QMainWindow):
         print("Logged in as {} {}".format(self.userID, self.userName))
 
     def executeLogout(self): #
+        qm = QMessageBox
+        response = qm.question(self, 'Warning', 'Are you sure you want to logout?', qm.Yes | qm.No)
+        if response == qm.No:
+            return
+
         self.stackedWidget.setCurrentIndex(User.GUEST.value)
         self.userIDType = User.GUEST
         self.userID = None

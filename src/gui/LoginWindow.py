@@ -2,9 +2,12 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from Flags import User
+from gui.Flags import User
+from os import path
 
-from SQL import sqlConnection
+from sql.SQL import sqlConnection
+
+PATH = path.dirname(path.abspath(__file__))
 
 class LoginWindow(QDialog):
     _idType = None
@@ -26,25 +29,25 @@ class LoginWindow(QDialog):
     
     def __init__(self):
         super(LoginWindow, self).__init__()
-        uic.loadUi('LoginUI.ui', self)
-        self.setWindowTitle("CS430 LOGIN")
-        
+        uic.loadUi(path.join(PATH, '../../assets/ui/LoginUI.ui'), self)
+
+        self.setWindowFlag(Qt.FramelessWindowHint)
+
         self.database = sqlConnection()
 
         self.login_line.setValidator(QIntValidator(100,399, self.login_line))
         self.login_button.clicked.connect(self.executeLogin)
-        
+        self.close_button.clicked.connect(self.executeClose)
 
-
-    # handleLogin takes input from lineedit box and queries tables for users depending on id given. Returns enum for respective ID.
     def executeLogin(self):
         id = self.login_line.text()
-        
+        if (id == ""):
+            return
         if (" " not in id and id[0] == '1' and self.database.checkIDExists('Student', id)):
             self.accept()
             self._idType = User.STUDENT
             self._id = id
-            self._name = self.database.getStudentName(id) #maybe get rid of this and pull from cursor during initial query.
+            self._name = self.database.getStudentName(id)
         elif (" " not in id and id[0] == '2' and self.database.checkIDExists('Faculty', id)):
             self.accept()
             self._idType = User.FACULTY
@@ -61,6 +64,18 @@ class LoginWindow(QDialog):
         self.database.closeConnection()
         print("Connection Closed")
         return
+
+    def executeClose(self):
+        self.close()
+        return
+
+    def mousePressEvent(self, event):
+        self.oldPos = event.globalPos()
+
+    def mouseMoveEvent(self, event):
+        delta = QPoint(event.globalPos() - self.oldPos)
+        self.move(self.x() + delta.x(), self.y() + delta.y())
+        self.oldPos = event.globalPos()
 
     def closeEvent(self, e):
         self.database.closeConnection()

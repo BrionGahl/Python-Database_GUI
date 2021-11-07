@@ -8,6 +8,13 @@ CONFIG = {
     'database': 'cs430'
 }
 
+MARIADB_CONFIG = {
+    'user': 'siu854476039',
+    'password': 'Blackout765765!!',
+    'host': 'dbserv.cs.siu.edu',
+    'database': 'CS430'
+}
+
 class sqlConnection:
     _cursor = None
     _cnx = None
@@ -22,7 +29,7 @@ class sqlConnection:
 
     def __init__(self):
         self.initConnection()
-        self._cnx.start_transaction()
+        self._cnx.start_transaction(consistent_snapshot=False, isolation_level='READ COMMITTED', readonly=False)
         #transaction isolation level here
     def initConnection(self):
         try:

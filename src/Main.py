@@ -1,4 +1,4 @@
-from GUI import GUI
+from gui.MainWindow import GUI
 
 def main():
     app = GUI()

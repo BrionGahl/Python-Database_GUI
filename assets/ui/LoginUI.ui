@@ -13,6 +13,37 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QPushButton {
+    background-color: rgba(0,0,0,0);
+	padding: 6px;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(74, 74, 74);
+}
+QLineEdit {
+	border: 2px solid rgb(84, 84, 84);
+	border-radius: 8px;
+	padding-left: 20px;
+	padding-right: 20px;
+	font-family: Arial, sans-serif;
+	width: 230px;
+	height: 32px;
+	background-color: rgb(74, 74, 74);
+}
+QLineEdit:hover {
+	border: 2px solid rgb(110, 110, 110);
+}
+QLineEdit:focus {
+	border: 2px solid #91b4d5;
+	background-color: rgb(84, 84, 84);
+}
+QLabel {
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+}</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>0</number>
@@ -65,11 +96,14 @@
          </item>
          <item>
           <widget class="QLabel" name="icon">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="text">
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap>icons/login.png</pixmap>
+            <pixmap>../icons/outline_account_circle_white_24dp.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>false</bool>
@@ -118,17 +152,15 @@
           <widget class="QLabel" name="label">
            <property name="font">
             <font>
-             <family>Monaco,Courier New,monospace</family>
+             <family>Arial,sans-serif</family>
              <pointsize>-1</pointsize>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">text-align: center;
-font-family: Monaco, &quot;Courier New&quot;, monospace;
-font-size: 40px;</string>
+            <string notr="true">font-size: 24px;</string>
            </property>
            <property name="text">
-            <string>USER LOGIN</string>
+            <string>Sign In</string>
            </property>
           </widget>
          </item>
@@ -200,10 +232,10 @@ font-size: 40px;</string>
          <item>
           <widget class="QLineEdit" name="login_line">
            <property name="styleSheet">
-            <string notr="true">width: 230px;
-height: 32px;
-border-color: rgb(177, 177, 177);
-border-radius: 10px</string>
+            <string notr="true"/>
+           </property>
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
            </property>
            <property name="placeholderText">
             <string>Enter User ID</string>
@@ -250,21 +282,44 @@ border-radius: 10px</string>
          </item>
          <item>
           <widget class="QPushButton" name="login_button">
+           <property name="toolTip">
+            <string>Login</string>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(193, 193, 193);
-width: 64px;
-height: 24px;
-border-style: solid;
-border-width: 1px;
-border-radius: 10px;
-border-color: rgb(188, 188, 188);
-font: bold;
-font-family: Monaco, &quot;Courier New&quot;, monospace;
-padding:  6px
-</string>
+            <string notr="true"/>
            </property>
            <property name="text">
-            <string>Login</string>
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../icons/outline_done_white_24dp.png</normaloff>../icons/outline_done_white_24dp.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="close_button">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset>
+             <normaloff>../icons/baseline_close_white_24dp.png</normaloff>../icons/baseline_close_white_24dp.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
            </property>
           </widget>
          </item>

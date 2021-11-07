@@ -3,8 +3,12 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import QIntValidator, QRegExpValidator
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from SQL import sqlConnection
-from Flags import *
+
+from sql.SQL import sqlConnection
+from gui.Flags import *
+from os import path
+
+PATH = path.dirname(path.abspath(__file__))
 
 class AddUpdateWindow(QDialog):
     index = None
@@ -14,8 +18,10 @@ class AddUpdateWindow(QDialog):
 
     def __init__(self, index, flag, *args): #args is for existing values for update option
         super(AddUpdateWindow, self).__init__()
-        uic.loadUi('AddUpdateUI_temp_stacked.ui', self)
+        uic.loadUi(path.join(PATH, '../../assets/ui/AddUpdateUI.ui'), self)
         self.stackedWidget.setCurrentIndex(index)
+
+        self.setWindowFlag(Qt.FramelessWindowHint)
 
         self.database = sqlConnection()
 
@@ -67,22 +73,26 @@ class AddUpdateWindow(QDialog):
             self.student_major.addItem(item[0])
 
     def _setupAdd(self): #maybe move validators to own method
-        self.setWindowTitle("Add Record")
         if (self.index == 0):
             self.student_confirm_button.clicked.connect(self.handleAddConfirm)
+            self.student_close_button.clicked.connect(self.handleClose)
         elif (self.index == 1):
             self.courses_confirm_button.clicked.connect(self.handleAddConfirm)
+            self.courses_close_button.clicked.connect(self.handleClose)
         elif (self.index == 2):
             self.enrolled_confirm_button.clicked.connect(self.handleAddConfirm)
+            self.enrolled_close_button.clicked.connect(self.handleClose)
         elif (self.index == 3):
             self.faculty_confirm_button.clicked.connect(self.handleAddConfirm)
+            self.faculty_close_button.clicked.connect(self.handleClose)
         elif (self.index == 4):
             self.staff_confirm_button.clicked.connect(self.handleAddConfirm)
+            self.staff_close_button.clicked.connect(self.handleClose)
         elif (self.index == 5):
             self.department_confirm_button.clicked.connect(self.handleAddConfirm)
+            self.department_close_button.clicked.connect(self.handleClose)
     
     def _setupUpdate(self, record):
-        self.setWindowTitle("Update Record")
         if (self.index == 0):
             self.student_sid.setText(record[0])
             self.student_sname.setText(record[1])
@@ -93,12 +103,12 @@ class AddUpdateWindow(QDialog):
             self.student_sid.setReadOnly(True)
 
             self.student_confirm_button.clicked.connect(self.handleUpdateConfirm)
+            self.student_close_button.clicked.connect(self.handleClose)
         elif (self.index == 1):
             self.courses_cid.setText(record[0])
             self.courses_cname.setText(record[1])
             
             time = record[2].split()
-            print(time)
             self.courses_meetsat_day.setCurrentIndex(self.courses_meetsat_day.findText(time[0]))
             self.courses_meetsat_time.setTime(QTime.fromString(time[1], "hh:mm:ss"))
 
@@ -109,6 +119,7 @@ class AddUpdateWindow(QDialog):
             self.courses_cid.setReadOnly(True)
 
             self.courses_confirm_button.clicked.connect(self.handleUpdateConfirm)
+            self.courses_close_button.clicked.connect(self.handleClose)
         elif (self.index == 2):
             self.enrolled_sid.setText(record[0])
             self.enrolled_cid.setText(record[1])
@@ -120,6 +131,7 @@ class AddUpdateWindow(QDialog):
             self.enrolled_cid.setReadOnly(True)
 
             self.enrolled_confirm_button.clicked.connect(self.handleUpdateConfirm)
+            self.enrolled_close_button.clicked.connect(self.handleClose)
         elif (self.index == 3):
             self.faculty_fid.setText(record[0])
             self.faculty_fname.setText(record[1])
@@ -128,6 +140,7 @@ class AddUpdateWindow(QDialog):
             self.faculty_fid.setReadOnly(True)
 
             self.faculty_confirm_button.clicked.connect(self.handleUpdateConfirm)
+            self.faculty_close_button.clicked.connect(self.handleClose)
         elif (self.index == 4):
             self.staff_sid.setText(record[0])
             self.staff_sname.setText(record[1])
@@ -136,6 +149,7 @@ class AddUpdateWindow(QDialog):
             self.staff_sid.setReadOnly(True)
 
             self.staff_confirm_button.clicked.connect(self.handleUpdateConfirm)
+            self.staff_close_button.clicked.connect(self.handleClose)
         elif (self.index == 5):
             self.department_did.setText(record[0])
             self.department_dname.setText(record[1])
@@ -143,6 +157,7 @@ class AddUpdateWindow(QDialog):
             self.department_did.setReadOnly(True)
 
             self.department_confirm_button.clicked.connect(self.handleUpdateConfirm)
+            self.department_close_button.clicked.connect(self.handleClose)
 
     def handleAddConfirm(self):
         record = []
@@ -309,6 +324,18 @@ class AddUpdateWindow(QDialog):
         self.accept()
         self.close()
         return
+
+    def handleClose(self):
+        self.close()
+        return
+    
+    def mousePressEvent(self, event):
+        self.oldPos = event.globalPos()
+
+    def mouseMoveEvent(self, event):
+        delta = QPoint(event.globalPos() - self.oldPos)
+        self.move(self.x() + delta.x(), self.y() + delta.y())
+        self.oldPos = event.globalPos()
     
     def closeEvent(self, e):
         print("Connection Closed")
