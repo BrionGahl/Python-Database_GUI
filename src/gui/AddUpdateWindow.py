@@ -4,7 +4,7 @@ from PyQt5.QtGui import QIntValidator, QRegExpValidator
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 
-from sql.SQL import sqlConnection
+from sql.SQL import SQLConnection
 from gui.Flags import *
 from os import path
 
@@ -30,7 +30,7 @@ class AddUpdateWindow(QDialog):
 
         self.setWindowFlag(Qt.FramelessWindowHint)
 
-        self.database = sqlConnection()
+        self.database = SQLConnection()
 
         self._setupValidator()
         self._index = index
@@ -41,10 +41,10 @@ class AddUpdateWindow(QDialog):
         
         self._record = []
      
-    def _setupValidator(self):
-        names_rx = QRegExp("^[A-Za-z]+((\s)?([A-Za-z])+)*$") #names ##### MAKE VALIDATORS LIMITED TO SPACE IN DB
+    def _setupValidator(self): #cap validator length
+        names_rx = QRegExp("^[A-Za-z]+((\s)?([A-Za-z])+)*$") 
         course_names_rx = QRegExp("^[A-Za-z]+((\s)?([A-Za-z0-9])+)*$")
-        alpha_rx = QRegExp("^[A-Za-z0-9]+$")
+        alpha_rx = QRegExp("^[A-Za-z0-9]$")
 
         self.student_sid.setValidator(QIntValidator(100, 199, self.student_sid))
         self.student_sname.setValidator(QRegExpValidator(names_rx, self.student_sname))

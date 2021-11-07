@@ -5,7 +5,7 @@ from PyQt5 import uic
 from gui.Flags import User
 from os import path
 
-from sql.SQL import sqlConnection
+from sql.SQL import SQLConnection
 
 PATH = path.dirname(path.abspath(__file__))
 
@@ -33,7 +33,7 @@ class LoginWindow(QDialog):
 
         self.setWindowFlag(Qt.FramelessWindowHint)
 
-        self.database = sqlConnection()
+        self.database = SQLConnection()
 
         self.login_line.setValidator(QIntValidator(100,399, self.login_line))
         self.login_button.clicked.connect(self.executeLogin)

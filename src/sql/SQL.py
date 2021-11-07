@@ -1,21 +1,24 @@
 import mysql.connector
 from mysql.connector import errorcode
+import sys
+import mariadb
 
-CONFIG = {
+TEST_CONFIG = {
     'user': 'root',
     'password': '1422',
     'host': '127.0.0.1',
     'database': 'cs430'
 }
 
-MARIADB_CONFIG = {
-    'user': 'siu854476039',
-    'password': 'Blackout765765!!',
-    'host': 'dbserv.cs.siu.edu',
-    'database': 'CS430'
+CONFIG = {
+    'user': 'ukmn6oaxad9poasi',
+    'password': 'jIUfM4EINbV12FUtTo0C',
+    'host': 'bi6kc1b78sdffcsm4ir6-mysql.services.clever-cloud.com',
+    'database': 'bi6kc1b78sdffcsm4ir6',
+    'port': '3306'
 }
 
-class sqlConnection:
+class SQLConnection:
     _cursor = None
     _cnx = None
 
@@ -29,8 +32,9 @@ class sqlConnection:
 
     def __init__(self):
         self.initConnection()
-        self._cnx.start_transaction(consistent_snapshot=False, isolation_level='READ COMMITTED', readonly=False)
-        #transaction isolation level here
+        
+        #self._cnx.start_transaction(consistent_snapshot=False, isolation_level='READ COMMITTED', readonly=False)
+    
     def initConnection(self):
         try:
             self._cnx = mysql.connector.connect(**CONFIG)
@@ -42,7 +46,7 @@ class sqlConnection:
                 print("DB does not exist")
             else:
                 print(err)
-        
+            sys.exit()
 
 #
 #  Student Queries
@@ -254,7 +258,7 @@ class sqlConnection:
         elif (schema == "Student"):
             query = ("UPDATE %s SET sname = '%s', major = '%s', s_level = '%s', age = %s WHERE sid = %s" % (schema, record[1], record[2], record[3], record[4], record[0]))
         elif (schema == "Courses"):
-            query = ("UPDATE %s SET cname = '%s', meets_at = '%s', room = '%s', fid = %s, limit_num = %s WHERE cid = %s" % (schema, record[1], record[2], record[3], record[4], record[5], record[0]))
+            query = ("UPDATE %s SET cname = '%s', meets_at = '%s', room = '%s', fid = %s, limit_num = %s WHERE cid = '%s'" % (schema, record[1], record[2], record[3], record[4], record[5], record[0]))
         elif (schema == "Faculty"):
             query = ("UPDATE %s SET fname = '%s', deptid = %s WHERE fid = %s" % (schema, record[1], record[2], record[0]))
         elif (schema == "Staff"):

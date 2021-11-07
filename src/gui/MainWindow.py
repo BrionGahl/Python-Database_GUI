@@ -1,10 +1,11 @@
 from PyQt5 import QtWidgets
+from PyQt5 import QtGui
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QColor, QIntValidator, QPalette, QRegExpValidator
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import sys
-from sql.SQL import sqlConnection
+from sql.SQL import SQLConnection
 from gui.Flags import *
 from os import path
 
@@ -19,7 +20,7 @@ class GUI:
 
     def __init__(self):
         self._app = QApplication(sys.argv)
-        
+        self._app.setWindowIcon(QtGui.QIcon('assets\icons\window_logo.png'))
         self.initStyle()
 
         self._window = MainWindow()
@@ -60,10 +61,10 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         uic.loadUi(path.join(PATH, '../../assets/ui/MainUI.ui'), self)
-        self.setWindowTitle("CS430 DB Access")
+        self.setWindowTitle("Brion Gahl - CS430 Project")
         self.stackedWidget.setCurrentIndex(self.userIDType.value)
 
-        self.database = sqlConnection()
+        self.database = SQLConnection()
 
         self._setupGuest()
         self._setupStudent()
@@ -158,7 +159,12 @@ class MainWindow(QMainWindow):
         for i in range(table.columnCount()):
             row.append(table.item(selected.row(), i).text())
         return row
+
+    #need validators here
     def _setupGuest(self):
+        alpha_rx = QRegExp("^[A-Za-z0-9]+((\s)?([A-Za-z0-9])+)*$")
+        self.search_bar.setValidator(QRegExpValidator(alpha_rx, self.search_bar))
+
         self.courses_table.setHorizontalHeaderLabels(['Course ID', 'Department', 'Course Name', 'Instructor', 'Meeting Time', 'Room', 'Currently Enrolled', 'Capacity']) 
         header = self.courses_table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
@@ -171,6 +177,9 @@ class MainWindow(QMainWindow):
         header.setSectionResizeMode(7, QtWidgets.QHeaderView.ResizeToContents)
 
     def _setupStudent(self):
+        alpha_rx = QRegExp("^[A-Za-z0-9]+((\s)?([A-Za-z0-9])+)*$")
+        self.student_search_bar.setValidator(QRegExpValidator(alpha_rx, self.student_search_bar))
+        
         self.student_courses_table.setHorizontalHeaderLabels(['Course ID', 'Department', 'Course Name', 'Instructor', 'Meeting Time', 'Room', 'Currently Enrolled', 'Capacity'])
         header = self.student_courses_table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
@@ -197,6 +206,9 @@ class MainWindow(QMainWindow):
         self.student_search_button.clicked.connect(self.executeStudentSearch)
 
     def _setupFaculty(self):
+        alpha_rx = QRegExp("^[A-Za-z0-9]+((\s)?([A-Za-z0-9])+)*$")
+        self.faculty_search_bar.setValidator(QRegExpValidator(alpha_rx, self.faculty_search_bar))
+
         self.faculty_student_table.setHorizontalHeaderLabels(['Student ID', 'Student Name', 'Major', 'Level', 'Age'])
         header = self.faculty_student_table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
@@ -243,6 +255,9 @@ class MainWindow(QMainWindow):
         self.faculty_search_button.clicked.connect(self.executeFacultySearch)
 
     def _setupStaff(self): 
+        alpha_rx = QRegExp("^[A-Za-z0-9]+((\s)?([A-Za-z0-9])+)*$")
+        self.staff_search_bar.setValidator(QRegExpValidator(alpha_rx, self.staff_search_bar))
+
         self.staff_student_table.setHorizontalHeaderLabels(['Student ID', 'Student Name', 'Major', 'Level', 'Age'])
         header = self.staff_student_table.horizontalHeader()
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
