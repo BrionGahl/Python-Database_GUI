@@ -533,15 +533,13 @@ class MainWindow(QMainWindow):
             elif (curr_tab == 5):
                 table = self.staff_department_table
                 record = self._fetchTableRow(table)
-
-            updatedRecord = createWindow(record)
         except:
            QMessageBox.warning(self, 'Error', 'A row must be selected.')
            return
+        updatedRecord = createWindow(record)
         if not updatedRecord:        
             return
         updatedRecord[:] = ["NULL" if x == '' else x for x in updatedRecord]
-        print(updatedRecord)
         print("Starting")
         try:
             if (curr_tab == 0):

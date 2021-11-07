@@ -11,8 +11,15 @@ from os import path
 PATH = path.dirname(path.abspath(__file__))
 
 class AddUpdateWindow(QDialog):
-    index = None
-    record = None
+    _index = None
+    _record = None
+
+    @property
+    def index(self):
+        return self._index
+    @property
+    def record(self):
+        return self._record
 
     database = None
 
@@ -26,13 +33,13 @@ class AddUpdateWindow(QDialog):
         self.database = sqlConnection()
 
         self._setupValidator()
-        self.index = index
+        self._index = index
         if (flag == Option.ADD):
             self._setupAdd()
         elif (flag == Option.UPDATE):
             self._setupUpdate(args[0])
         
-        self.record = []
+        self._record = []
      
     def _setupValidator(self):
         names_rx = QRegExp("^[A-Za-z]+((\s)?([A-Za-z])+)*$") #names ##### MAKE VALIDATORS LIMITED TO SPACE IN DB
@@ -73,27 +80,27 @@ class AddUpdateWindow(QDialog):
             self.student_major.addItem(item[0])
 
     def _setupAdd(self): #maybe move validators to own method
-        if (self.index == 0):
+        if (self._index == 0):
             self.student_confirm_button.clicked.connect(self.handleAddConfirm)
             self.student_close_button.clicked.connect(self.handleClose)
-        elif (self.index == 1):
+        elif (self._index == 1):
             self.courses_confirm_button.clicked.connect(self.handleAddConfirm)
             self.courses_close_button.clicked.connect(self.handleClose)
-        elif (self.index == 2):
+        elif (self._index == 2):
             self.enrolled_confirm_button.clicked.connect(self.handleAddConfirm)
             self.enrolled_close_button.clicked.connect(self.handleClose)
-        elif (self.index == 3):
+        elif (self._index == 3):
             self.faculty_confirm_button.clicked.connect(self.handleAddConfirm)
             self.faculty_close_button.clicked.connect(self.handleClose)
-        elif (self.index == 4):
+        elif (self._index == 4):
             self.staff_confirm_button.clicked.connect(self.handleAddConfirm)
             self.staff_close_button.clicked.connect(self.handleClose)
-        elif (self.index == 5):
+        elif (self._index == 5):
             self.department_confirm_button.clicked.connect(self.handleAddConfirm)
             self.department_close_button.clicked.connect(self.handleClose)
     
     def _setupUpdate(self, record):
-        if (self.index == 0):
+        if (self._index == 0):
             self.student_sid.setText(record[0])
             self.student_sname.setText(record[1])
             self.student_major.setCurrentIndex(self.student_major.findText(record[2]))
@@ -104,7 +111,7 @@ class AddUpdateWindow(QDialog):
 
             self.student_confirm_button.clicked.connect(self.handleUpdateConfirm)
             self.student_close_button.clicked.connect(self.handleClose)
-        elif (self.index == 1):
+        elif (self._index == 1):
             self.courses_cid.setText(record[0])
             self.courses_cname.setText(record[1])
             
@@ -120,7 +127,7 @@ class AddUpdateWindow(QDialog):
 
             self.courses_confirm_button.clicked.connect(self.handleUpdateConfirm)
             self.courses_close_button.clicked.connect(self.handleClose)
-        elif (self.index == 2):
+        elif (self._index == 2):
             self.enrolled_sid.setText(record[0])
             self.enrolled_cid.setText(record[1])
             self.enrolled_exam1.setText(record[2])
@@ -132,7 +139,7 @@ class AddUpdateWindow(QDialog):
 
             self.enrolled_confirm_button.clicked.connect(self.handleUpdateConfirm)
             self.enrolled_close_button.clicked.connect(self.handleClose)
-        elif (self.index == 3):
+        elif (self._index == 3):
             self.faculty_fid.setText(record[0])
             self.faculty_fname.setText(record[1])
             self.faculty_deptid.setText(record[2])
@@ -141,7 +148,7 @@ class AddUpdateWindow(QDialog):
 
             self.faculty_confirm_button.clicked.connect(self.handleUpdateConfirm)
             self.faculty_close_button.clicked.connect(self.handleClose)
-        elif (self.index == 4):
+        elif (self._index == 4):
             self.staff_sid.setText(record[0])
             self.staff_sname.setText(record[1])
             self.staff_deptid.setText(record[2])
@@ -150,7 +157,7 @@ class AddUpdateWindow(QDialog):
 
             self.staff_confirm_button.clicked.connect(self.handleUpdateConfirm)
             self.staff_close_button.clicked.connect(self.handleClose)
-        elif (self.index == 5):
+        elif (self._index == 5):
             self.department_did.setText(record[0])
             self.department_dname.setText(record[1])
 
@@ -161,7 +168,7 @@ class AddUpdateWindow(QDialog):
 
     def handleAddConfirm(self):
         record = []
-        if (self.index == 0): # no values can be empty
+        if (self._index == 0): # no values can be empty
             record.append(self.student_sid.text())
             record.append(self.student_sname.text())
             record.append(self.student_major.currentText())
@@ -174,7 +181,7 @@ class AddUpdateWindow(QDialog):
             elif (self.database.checkIDExists("Student", record[0]) or not (int(record[0]) >= 100 and int(record[0]) < 200)):
                 QMessageBox.warning(self, 'Error', 'Invalid ID/ID already in use.')
                 return
-        elif (self.index == 1): # no values can be empty
+        elif (self._index == 1): # no values can be empty
             record.append(self.courses_cid.text())
             record.append(self.courses_cname.text())
             cat = self.courses_meetsat_day.currentText() + " " + self.courses_meetsat_time.time().toString()
@@ -192,7 +199,7 @@ class AddUpdateWindow(QDialog):
             elif (not self.database.checkIDExists("Faculty", record[4])):
                 QMessageBox.warning(self, 'Error', 'A faculty member matching that ID does not exist.')
                 return
-        elif (self.index == 2): # more error checking, in case we try to add an existing combination
+        elif (self._index == 2): # more error checking, in case we try to add an existing combination
             record.append(self.enrolled_sid.text())
             record.append(self.enrolled_cid.text())
             record.append(self.enrolled_exam1.text())
@@ -211,7 +218,7 @@ class AddUpdateWindow(QDialog):
             elif ((not (record[2] == "") and (int(record[2]) > 100)) or (not (record[3] == "") and (int(record[3]) > 100)) or (not (record[4] == "") and (int(record[4]) > 100))):
                 QMessageBox.warning(self, 'Error', 'Grades must be in range 0 - 100')
                 return
-        elif (self.index == 3): # no values can be empty
+        elif (self._index == 3): # no values can be empty
             record.append(self.faculty_fid.text())
             record.append(self.faculty_fname.text())
             record.append(self.faculty_deptid.text())
@@ -225,7 +232,7 @@ class AddUpdateWindow(QDialog):
             elif (not self.database.checkIDExists("Department", record[2])):
                 QMessageBox.warning(self, 'Error', 'Department does not exist.')
                 return
-        elif (self.index == 4): # no values can be empty
+        elif (self._index == 4): # no values can be empty
             record.append(self.staff_sid.text())
             record.append(self.staff_sname.text())
             record.append(self.staff_deptid.text())
@@ -239,7 +246,7 @@ class AddUpdateWindow(QDialog):
             elif (not self.database.checkIDExists("Department", record[2])):
                 QMessageBox.warning(self, 'Error', 'Department does not exist.')
                 return
-        elif (self.index == 5): # no values can be empty
+        elif (self._index == 5): # no values can be empty
             record.append(self.department_did.text())
             record.append(self.department_dname.text())
             #check valid id
@@ -249,14 +256,14 @@ class AddUpdateWindow(QDialog):
             elif (self.database.checkIDExists("Department", record[0]) or not (int(record[0]) >= 400 and int(record[0]) < 500)):
                 QMessageBox.warning(self, 'Error', 'Invalid ID/ID already in use.')
                 return
-        self.record = record
+        self._record = record
         self.accept()
         self.close()
         return
 
     def handleUpdateConfirm(self):
         record = []
-        if (self.index == 0): # no values can be empty
+        if (self._index == 0): # no values can be empty
             record.append(self.student_sid.text())
             record.append(self.student_sname.text())
             record.append(self.student_major.currentText())
@@ -266,7 +273,7 @@ class AddUpdateWindow(QDialog):
             if "" in record:
                 QMessageBox.warning(self, 'Error', 'Cannot submit an empty line.')
                 return
-        elif (self.index == 1): # no values can be empty
+        elif (self._index == 1): # no values can be empty
             record.append(self.courses_cid.text())
             record.append(self.courses_cname.text())
             cat = self.courses_meetsat_day.currentText() + " " + self.courses_meetsat_time.time().toString()
@@ -281,7 +288,7 @@ class AddUpdateWindow(QDialog):
             elif (not self.database.checkIDExists("Faculty", record[4])):
                 QMessageBox.warning(self, 'Error', 'A faculty member matching that ID does not exist.')
                 return
-        elif (self.index == 2): # more error checking, in case we try to add an existing combination
+        elif (self._index == 2): # more error checking, in case we try to add an existing combination
             record.append(self.enrolled_sid.text())
             record.append(self.enrolled_cid.text())
             record.append(self.enrolled_exam1.text())
@@ -291,7 +298,7 @@ class AddUpdateWindow(QDialog):
             if ((not (record[2] == "") and (int(record[2]) > 100)) or (not (record[3] == "") and (int(record[3]) > 100)) or (not (record[4] == "") and (int(record[4]) > 100))):
                 QMessageBox.warning(self, 'Error', 'Grades must be in range 0 - 100')
                 return
-        elif (self.index == 3): # no values can be empty
+        elif (self._index == 3): # no values can be empty
             record.append(self.faculty_fid.text())
             record.append(self.faculty_fname.text())
             record.append(self.faculty_deptid.text())
@@ -302,7 +309,7 @@ class AddUpdateWindow(QDialog):
             elif (not self.database.checkIDExists("Department", record[2])):
                 QMessageBox.warning(self, 'Error', 'Department does not exist.')
                 return
-        elif (self.index == 4): # no values can be empty
+        elif (self._index == 4): # no values can be empty
             record.append(self.staff_sid.text())
             record.append(self.staff_sname.text())
             record.append(self.staff_deptid.text())
@@ -313,14 +320,14 @@ class AddUpdateWindow(QDialog):
             elif (not self.database.checkIDExists("Department", record[2])):
                 QMessageBox.warning(self, 'Error', 'Department does not exist.')
                 return
-        elif (self.index == 5): # no values can be empty
+        elif (self._index == 5): # no values can be empty
             record.append(self.department_did.text())
             record.append(self.department_dname.text())
             #check valid id
             if "" in record:
                 QMessageBox.warning(self, 'Error', 'Cannot submit an empty line.')
                 return
-        self.record = record
+        self._record = record
         self.accept()
         self.close()
         return
