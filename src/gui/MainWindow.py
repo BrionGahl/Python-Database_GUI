@@ -14,20 +14,20 @@ from gui.AddUpdateWindow import AddUpdateWindow
 PATH = path.dirname(path.abspath(__file__))
 
 class GUI:
-    app = None
-    window = None
+    _app = None
+    _window = None
 
     def __init__(self):
-        self.app = QApplication(sys.argv)
+        self._app = QApplication(sys.argv)
         
         self.initStyle()
 
-        self.window = MainWindow()
-        self.window.show()
-        sys.exit(self.app.exec_())
+        self._window = MainWindow()
+        self._window.show()
+        sys.exit(self._app.exec_())
         
     def initStyle(self):
-        self.app.setStyle("Fusion")
+        self._app.setStyle("Fusion")
 
         darkPalette = QPalette()
 
@@ -45,9 +45,9 @@ class GUI:
         darkPalette.setColor(QPalette.Highlight, QColor(42, 130, 218))
         darkPalette.setColor(QPalette.HighlightedText, Qt.black)
 
-        self.app.setPalette(darkPalette)
+        self._app.setPalette(darkPalette)
 
-        self.app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
+        self._app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
 
         
 class MainWindow(QMainWindow):
