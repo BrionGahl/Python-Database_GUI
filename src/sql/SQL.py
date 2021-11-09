@@ -42,7 +42,7 @@ class SQLConnection:
     def initConnection(self):
         try:
             self._cnx = mysql.connector.connect(**CONFIG)
-            self._cursor = self._cnx.cursor()
+            self._cursor = self._cnx.cursor(prepared=True)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Incorrect name or password.")
