@@ -30,7 +30,7 @@ class AddUpdateWindow(QDialog):
 
         self.setWindowFlag(Qt.FramelessWindowHint)
 
-        self.database = SQLConnection()
+        self.database = SQLConnection(True)
 
         self._setupValidator()
         self._index = index
@@ -44,7 +44,7 @@ class AddUpdateWindow(QDialog):
     def _setupValidator(self): #cap validator length
         names_rx = QRegExp("^[A-Za-z]+((\s)?([A-Za-z])+)*$") 
         course_names_rx = QRegExp("^[A-Za-z]+((\s)?([A-Za-z0-9])+)*$")
-        alpha_rx = QRegExp("^[A-Za-z0-9]$")
+        alpha_rx = QRegExp("^[A-Za-z0-9]+$")
 
         self.student_sid.setValidator(QIntValidator(100, 199, self.student_sid))
         self.student_sname.setValidator(QRegExpValidator(names_rx, self.student_sname))

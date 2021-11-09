@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Brion Gahl - CS430 Project")
         self.stackedWidget.setCurrentIndex(self.userIDType.value)
 
-        self.database = SQLConnection()
+        self.database = SQLConnection(False)
 
         self._setupGuest()
         self._setupStudent()
@@ -341,6 +341,15 @@ class MainWindow(QMainWindow):
 
         print("EXECUTED LOGOUT")
 
+    def undoButton(self):
+        self.database.rollback()
+        self._loadTables()
+        return
+
+#
+# Search Buttons
+#
+
     def executeGuestSearch(self):
         string = self.search_bar.text()
         if string == "":
@@ -417,6 +426,10 @@ class MainWindow(QMainWindow):
             self._populateTable(self.faculty_department_table, 2)
         return
 
+    #
+    # Student Buttons
+    #
+
     def executeEnroll(self):
         table = self.student_courses_table
         try:
@@ -438,7 +451,6 @@ class MainWindow(QMainWindow):
         except:
             QMessageBox.warning(self, 'Error', 'A row must be selected.')
             return
-        self.database.cnx.commit()
         self._loadTables()
         return
     #
@@ -469,7 +481,6 @@ class MainWindow(QMainWindow):
                 self.database.insertEntry("Department", record)
         except:
             QMessageBox.warning(self, 'Error', 'Something went wrong.')
-        self.database.cnx.commit()
         self._loadTables()
         return
 
@@ -514,7 +525,6 @@ class MainWindow(QMainWindow):
         except:
             QMessageBox.warning(self, 'Error', 'A row must be selected.')
             return
-        self.database.cnx.commit()
         self._loadTables()
         return
 
@@ -571,7 +581,6 @@ class MainWindow(QMainWindow):
                 self.database.updateEntry("Department", updatedRecord)
         except:
             QMessageBox.warning(self, 'Error', 'Something went wrong.')
-        self.database.cnx.commit()
         self._loadTables()
         return
         

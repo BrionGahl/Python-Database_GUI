@@ -1,7 +1,6 @@
 import mysql.connector
 from mysql.connector import errorcode
 import sys
-import mariadb
 
 TEST_CONFIG = {
     'user': 'root',
@@ -18,6 +17,10 @@ CONFIG = {
     'port': '3306'
 }
 
+#
+# By default mysql connector is set to repeatable read, and creates transactions for every execute.
+#
+
 class SQLConnection:
     _cursor = None
     _cnx = None
@@ -30,10 +33,11 @@ class SQLConnection:
     def cnx(self):
         return self._cnx
 
-    def __init__(self):
+    def __init__(self, bool):
         self.initConnection()
-        
-        #self._cnx.start_transaction(consistent_snapshot=False, isolation_level='READ COMMITTED', readonly=False)
+        self._cnx.autocommit = False
+        if (bool):
+            self._cnx.start_transaction(consistent_snapshot=False, isolation_level='READ COMMITTED', readonly=bool)
     
     def initConnection(self):
         try:
@@ -242,6 +246,7 @@ class SQLConnection:
         else:
             query = ("DELETE FROM %s WHERE %s = %s;" % (schema, args[0], args[1]))
         self._cursor.execute(query)
+        self.commit()
         return
 
     def insertEntry(self, schema, record):
@@ -250,6 +255,7 @@ class SQLConnection:
         else:
             query = ("INSERT INTO %s VALUES %s;" % (schema, tuple(record)))
         self._cursor.execute(query)
+        self.commit()
         return
 
     def updateEntry(self, schema, record):
@@ -265,8 +271,8 @@ class SQLConnection:
             query = ("UPDATE %s SET sname = '%s', deptid = %s WHERE sid = %s" % (schema, record[1], record[2], record[0]))
         elif (schema == "Department"):
             query = (("UPDATE %s SET dname = '%s' WHERE did = %s" % (schema, record[1], record[0])))
-        print("UPDATE: %s" % query)
         self._cursor.execute(query)
+        self.commit()
         return
 
 
@@ -277,6 +283,10 @@ class SQLConnection:
     def fetchRow(self):
         return self._cursor.fetchone()
 
-    def closeConnection(self):
+    def commit(self):
         self._cnx.commit()
+
+    def closeConnection(self):
+        if (self._cnx.in_transaction):
+            self._cnx.commit()
         self._cnx.close()

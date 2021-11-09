@@ -33,7 +33,7 @@ class LoginWindow(QDialog):
 
         self.setWindowFlag(Qt.FramelessWindowHint)
 
-        self.database = SQLConnection()
+        self.database = SQLConnection(True)
 
         self.login_line.setValidator(QIntValidator(100,399, self.login_line))
         self.login_button.clicked.connect(self.executeLogin)
