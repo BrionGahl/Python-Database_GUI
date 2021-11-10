@@ -1,13 +1,7 @@
 import mysql.connector
 from mysql.connector import errorcode
 import sys
-
-TEST_CONFIG = {
-    'user': 'root',
-    'password': '1422',
-    'host': '127.0.0.1',
-    'database': 'cs430'
-}
+import json
 
 CONFIG = {
     'user': 'ukmn6oaxad9poasi',
@@ -34,14 +28,16 @@ class SQLConnection:
         return self._cnx
 
     def __init__(self, bool):
-        self.initConnection()
+        with open('config.json') as cred:
+            config = json.load(cred)
+        self.initConnection(config)
         self._cnx.autocommit = False
         if (bool):
             self._cnx.start_transaction(consistent_snapshot=False, isolation_level='READ COMMITTED', readonly=bool)
     
-    def initConnection(self):
+    def initConnection(self, config):
         try:
-            self._cnx = mysql.connector.connect(**CONFIG)
+            self._cnx = mysql.connector.connect(**config)
             self._cursor = self._cnx.cursor(prepared=True)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -251,7 +247,7 @@ class SQLConnection:
 
     def insertEntry(self, schema, record):
         if (schema == "Enrolled"):
-            query = ("INSERT INTO %s VALUES (%s, %s, %s, %s, %s);" % (schema, record[0], record[1], record[2], record[3], record[4]))
+            query = ("INSERT INTO %s VALUES (%s, '%s', %s, %s, %s);" % (schema, record[0], record[1], record[2], record[3], record[4]))
         else:
             query = ("INSERT INTO %s VALUES %s;" % (schema, tuple(record)))
         self._cursor.execute(query)

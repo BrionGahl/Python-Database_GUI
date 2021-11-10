@@ -79,6 +79,7 @@ class MainWindow(QMainWindow):
         
     def _populateTable(self, table, columns):
         currRow = 0
+        table.setRowCount(currRow)
         for row in self.database.cursor:
             if row == None:
                 break
@@ -88,7 +89,6 @@ class MainWindow(QMainWindow):
                 table.setItem(currRow-1, currColumn, QtWidgets.QTableWidgetItem(str(row[currColumn])))
                 if (row[currColumn] == None):
                     table.setItem(currRow-1, currColumn, QtWidgets.QTableWidgetItem(''))
-
 
     def _switchView(self):
         self.stackedWidget.setCurrentIndex(self.userIDType.value)
@@ -124,7 +124,6 @@ class MainWindow(QMainWindow):
         def loadStaff():
             self.database.queryStudent()
             self._populateTable(self.staff_student_table, 5)
-
 
             self.database.queryCourses()
             self._populateTable(self.staff_courses_table, 6)
@@ -439,7 +438,7 @@ class MainWindow(QMainWindow):
                 QMessageBox.warning(self, 'Error', 'You are already enrolled in that course.')
                 return    
             if (record[6] == record[7]):
-                QMessageBox.warning(self, 'Error', 'That class is at full.')
+                QMessageBox.warning(self, 'Error', 'That class is at full capacity.')
                 return    
 
             qm = QMessageBox
@@ -497,6 +496,7 @@ class MainWindow(QMainWindow):
                 record = self._fetchTableRow(table)
 
                 self.database.deleteEntry("Student", "sid", record[0])
+                table.clearSelection()
             elif (curr_tab == 1):
                 table = self.staff_courses_table
                 record = self._fetchTableRow(table)
@@ -565,7 +565,6 @@ class MainWindow(QMainWindow):
         if not updatedRecord:        
             return
         updatedRecord[:] = ["NULL" if x == '' else x for x in updatedRecord]
-        print("Starting")
         try:
             if (curr_tab == 0):
                 self.database.updateEntry("Student", updatedRecord)

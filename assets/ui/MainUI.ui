@@ -13,6 +13,37 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QPushButton {
+    background-color: rgba(0,0,0,0);
+	padding: 6px;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(74, 74, 74);
+}
+QLineEdit {
+	border: 2px solid rgb(84, 84, 84);
+	border-radius: 12px;
+	padding-left: 20px;
+	padding-right: 20px;
+	font-family: Arial, sans-serif;
+	width: 150px;
+	height: 24px;
+	background-color: rgb(74, 74, 74);
+}
+QLineEdit:hover {
+	border: 2px solid rgb(110, 110, 110);
+}
+QLineEdit:focus {
+	border: 2px solid #91b4d5;
+	background-color: rgb(84, 84, 84);
+}
+QLabel {
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+}</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
     <string notr="true">QPushButton {
@@ -110,7 +141,7 @@ QHeaderView::section {
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="mainView">
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -340,6 +371,9 @@ QHeaderView::section {
                 </property>
                 <property name="alternatingRowColors">
                  <bool>true</bool>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
                 </property>
                 <property name="selectionBehavior">
                  <enum>QAbstractItemView::SelectRows</enum>
@@ -657,6 +691,9 @@ QHeaderView::section {
                     </property>
                     <property name="alternatingRowColors">
                      <bool>true</bool>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
                     </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
@@ -1010,6 +1047,9 @@ QHeaderView::section {
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
                     </property>
@@ -1058,6 +1098,9 @@ QHeaderView::section {
                     </property>
                     <property name="alternatingRowColors">
                      <bool>true</bool>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
                     </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
@@ -1109,6 +1152,9 @@ QHeaderView::section {
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
                     </property>
@@ -1158,6 +1204,9 @@ QHeaderView::section {
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
                     </property>
@@ -1205,6 +1254,9 @@ QHeaderView::section {
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
                     </property>
@@ -1251,6 +1303,9 @@ QHeaderView::section {
                     </property>
                     <property name="alternatingRowColors">
                      <bool>true</bool>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
                     </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
@@ -1589,6 +1644,9 @@ QHeaderView::section {
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
                     </property>
@@ -1622,6 +1680,9 @@ QHeaderView::section {
                     </property>
                     <property name="alternatingRowColors">
                      <bool>true</bool>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
                     </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
@@ -1658,6 +1719,9 @@ QHeaderView::section {
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
                     </property>
@@ -1692,6 +1756,9 @@ QHeaderView::section {
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
                     </property>
@@ -1724,6 +1791,9 @@ QHeaderView::section {
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
                     </property>
@@ -1755,6 +1825,9 @@ QHeaderView::section {
                     </property>
                     <property name="alternatingRowColors">
                      <bool>true</bool>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
                     </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
