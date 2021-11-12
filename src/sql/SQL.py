@@ -3,14 +3,6 @@ from mysql.connector import errorcode
 import sys
 import json
 
-CONFIG = {
-    'user': 'ukmn6oaxad9poasi',
-    'password': 'jIUfM4EINbV12FUtTo0C',
-    'host': 'bi6kc1b78sdffcsm4ir6-mysql.services.clever-cloud.com',
-    'database': 'bi6kc1b78sdffcsm4ir6',
-    'port': '3306'
-}
-
 #
 # By default mysql connector is set to repeatable read, and creates transactions for every execute.
 #
@@ -165,15 +157,7 @@ class SQLConnection:
     def searchEnrolled(self, string):
         if " " in string:
             return
-        query = """SELECT * FROM Enrolled WHERE sid = %s 
-        UNION 
-        SELECT * FROM Enrolled WHERE cid = '%s' 
-        UNION 
-        SELECT * FROM Enrolled WHERE exam1 = %s 
-        UNION 
-        SELECT * FROM Enrolled WHERE exam2 = %s 
-        UNION 
-        SELECT * FROM Enrolled WHERE final = %s;""" % (string, string, string, string, string)
+        query = "SELECT * FROM Enrolled WHERE cid = '%s'" % (string)
         self._cursor.execute(query)
     def searchFaculty(self, string):
         if (string.isdigit()):

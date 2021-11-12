@@ -35,7 +35,7 @@ class LoginWindow(QDialog):
 
         self.database = SQLConnection(True)
 
-        self.login_line.setValidator(QIntValidator(100,399, self.login_line))
+        self.login_line.setValidator(QIntValidator(1,100000000, self.login_line))
         self.login_button.clicked.connect(self.executeLogin)
         self.close_button.clicked.connect(self.executeClose)
 
@@ -43,17 +43,17 @@ class LoginWindow(QDialog):
         id = self.login_line.text()
         if (id == ""):
             return
-        if (" " not in id and id[0] == '1' and self.database.checkIDExists('Student', id)):
+        if (" " not in id and self.database.checkIDExists('Student', id)): # and id[0] == '1' 
             self.accept()
             self._idType = User.STUDENT
             self._id = id
             self._name = self.database.getStudentName(id)
-        elif (" " not in id and id[0] == '2' and self.database.checkIDExists('Faculty', id)):
+        elif (" " not in id and self.database.checkIDExists('Faculty', id)): # and id[0] == '2' 
             self.accept()
             self._idType = User.FACULTY
             self._id = id
             self._name = self.database.getFacultyName(id)
-        elif (" " not in id and id[0] == '3' and self.database.checkIDExists('Staff', id)):
+        elif (" " not in id and self.database.checkIDExists('Staff', id)): # and id[0] == '3' 
             self.accept()
             self._idType = User.STAFF
             self._id = id

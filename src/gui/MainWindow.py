@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5.QtCore import *
-from PyQt5.QtGui import QColor, QIntValidator, QPalette, QRegExpValidator
+from PyQt5.QtGui import QColor, QPalette, QRegExpValidator
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 
@@ -464,6 +464,7 @@ class MainWindow(QMainWindow):
             record = self._fetchTableRow(table)
             if (record[4] != '' or record[5] != '' or record[6] != ''):
                 QMessageBox.warning(self, 'Error', 'Unable to Withdraw. A grade has already been posted.')
+                return
         
             qm = QMessageBox
             response = qm.question(self, 'Warning', 'Are you sure you want to withdraw from this course?', qm.Yes | qm.No)

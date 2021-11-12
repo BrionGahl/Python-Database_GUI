@@ -1,2 +1,4 @@
-Course ID,Course Name,Meeting Time,Room,Faculty ID,Capacity
-500,Data Structures,Monday/Wednesday/Friday 09:00:00,ENGA404,200,15
+Student ID,Course ID,Exam 1,Exam 2,Final
+100,502,75,,
+101,502,,,
+102,502,,,

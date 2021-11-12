@@ -46,7 +46,7 @@ class AddUpdateWindow(QDialog):
         course_names_rx = QRegExp("^[A-Za-z]+((\s)?([A-Za-z0-9])+)*$")
         alpha_rx = QRegExp("^[A-Za-z0-9]+$")
 
-        self.student_sid.setValidator(QIntValidator(100, 199, self.student_sid))
+        self.student_sid.setValidator(QIntValidator(1, 100000000, self.student_sid)) #100, 199
         self.student_sname.setValidator(QRegExpValidator(names_rx, self.student_sname))
         self.student_age.setValidator(QIntValidator(10, 150, self.student_age))
         self._populateMajors()
@@ -54,24 +54,24 @@ class AddUpdateWindow(QDialog):
         self.courses_cid.setValidator(QRegExpValidator(alpha_rx, self.courses_cid))
         self.courses_cname.setValidator(QRegExpValidator(course_names_rx, self.courses_cname))
         self.courses_room.setValidator(QRegExpValidator(alpha_rx, self.courses_room))
-        self.courses_fid.setValidator(QIntValidator(200, 299, self.courses_fid))
+        self.courses_fid.setValidator(QIntValidator(1, 100000000, self.courses_fid)) #200, 299
         self.courses_limitnum.setValidator(QIntValidator(1, 100, self.courses_limitnum))
 
-        self.enrolled_sid.setValidator(QIntValidator(100, 199, self.enrolled_sid))
+        self.enrolled_sid.setValidator(QIntValidator(1, 100000000, self.enrolled_sid)) #100, 199
         self.enrolled_cid.setValidator(QRegExpValidator(alpha_rx, self.enrolled_cid))
         self.enrolled_exam1.setValidator(QIntValidator(0, 100, self.enrolled_exam1))
         self.enrolled_exam2.setValidator(QIntValidator(0, 100, self.enrolled_exam2))
         self.enrolled_final.setValidator(QIntValidator(0, 100, self.enrolled_final))
 
-        self.faculty_fid.setValidator(QIntValidator(200, 299, self.faculty_fid))
+        self.faculty_fid.setValidator(QIntValidator(1, 100000000, self.faculty_fid)) #200, 299
         self.faculty_fname.setValidator(QRegExpValidator(names_rx, self.faculty_fname))
-        self.faculty_deptid.setValidator(QIntValidator(400, 499, self.faculty_deptid))
+        self.faculty_deptid.setValidator(QIntValidator(1, 100000000, self.faculty_deptid)) #400, 499
 
-        self.staff_sid.setValidator(QIntValidator(300, 399, self.staff_sid))
+        self.staff_sid.setValidator(QIntValidator(1, 100000000, self.staff_sid)) #300, 399
         self.staff_sname.setValidator(QRegExpValidator(names_rx, self.staff_sname))
-        self.staff_deptid.setValidator(QIntValidator(400, 499, self.staff_deptid))
+        self.staff_deptid.setValidator(QIntValidator(1, 100000000, self.staff_deptid)) #400, 499
 
-        self.department_did.setValidator(QIntValidator(400, 499, self.department_did))
+        self.department_did.setValidator(QIntValidator(1, 100000000, self.department_did)) #400, 499
         self.department_dname.setValidator(QRegExpValidator(names_rx, self.department_dname))
 
     def _populateMajors(self):
@@ -79,7 +79,7 @@ class AddUpdateWindow(QDialog):
         for item in self.database.cursor:
             self.student_major.addItem(item[0])
 
-    def _setupAdd(self): #maybe move validators to own method
+    def _setupAdd(self):
         if (self._index == 0):
             self.student_confirm_button.clicked.connect(self.handleAddConfirm)
             self.student_close_button.clicked.connect(self.handleClose)
@@ -178,7 +178,7 @@ class AddUpdateWindow(QDialog):
             if "" in record:
                 QMessageBox.warning(self, 'Error', 'Cannot submit an empty line.')
                 return
-            elif (self.database.checkIDExists("Student", record[0]) or not (int(record[0]) >= 100 and int(record[0]) < 200)):
+            elif (self.database.checkIDExists("Student", record[0])): #or not (int(record[0]) >= 100 and int(record[0]) < 200)
                 QMessageBox.warning(self, 'Error', 'Invalid ID/ID already in use.')
                 return
         elif (self._index == 1): # no values can be empty
@@ -226,7 +226,7 @@ class AddUpdateWindow(QDialog):
             if "" in record:
                 QMessageBox.warning(self, 'Error', 'Cannot submit an empty line.')
                 return
-            elif (self.database.checkIDExists("Faculty", record[0]) or not (int(record[0]) >= 200 and int(record[0]) < 300)):
+            elif (self.database.checkIDExists("Faculty", record[0])): # or not (int(record[0]) >= 200 and int(record[0]) < 300)
                 QMessageBox.warning(self, 'Error', 'Invalid ID/ID already in use.')
                 return
             elif (not self.database.checkIDExists("Department", record[2])):
@@ -240,7 +240,7 @@ class AddUpdateWindow(QDialog):
             if "" in record:
                 QMessageBox.warning(self, 'Error', 'Cannot submit an empty line.')
                 return
-            elif (self.database.checkIDExists("Staff", record[0]) or not (int(record[0]) >= 300 and int(record[0]) < 400)):
+            elif (self.database.checkIDExists("Staff", record[0])): # or not (int(record[0]) >= 300 and int(record[0]) < 400)
                 QMessageBox.warning(self, 'Error', 'Invalid ID/ID already in use.')
                 return
             elif (not self.database.checkIDExists("Department", record[2])):
@@ -253,7 +253,7 @@ class AddUpdateWindow(QDialog):
             if "" in record:
                 QMessageBox.warning(self, 'Error', 'Cannot submit an empty line.')
                 return
-            elif (self.database.checkIDExists("Department", record[0]) or not (int(record[0]) >= 400 and int(record[0]) < 500)):
+            elif (self.database.checkIDExists("Department", record[0])): # or not (int(record[0]) >= 400 and int(record[0]) < 500)
                 QMessageBox.warning(self, 'Error', 'Invalid ID/ID already in use.')
                 return
         self._record = record
