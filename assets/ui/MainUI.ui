@@ -141,7 +141,7 @@ QHeaderView::section {
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>3</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="mainView">
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -549,6 +549,26 @@ QHeaderView::section {
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="QPushButton" name="student_withdraw_button">
+                   <property name="toolTip">
+                    <string>Withdraw</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>../icons/outline_undo_white_24dp.png</normaloff>../icons/outline_undo_white_24dp.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>24</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -662,7 +682,7 @@ QHeaderView::section {
               <item>
                <widget class="QTabWidget" name="student_tabs">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="student_courses_tab">
                  <attribute name="title">
@@ -748,7 +768,7 @@ QHeaderView::section {
                      <bool>true</bool>
                     </property>
                     <property name="selectionMode">
-                     <enum>QAbstractItemView::NoSelection</enum>
+                     <enum>QAbstractItemView::SingleSelection</enum>
                     </property>
                     <property name="selectionBehavior">
                      <enum>QAbstractItemView::SelectRows</enum>
@@ -903,6 +923,26 @@ QHeaderView::section {
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="faculty_export_button">
+                   <property name="toolTip">
+                    <string>Export</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>../icons/outline_file_download_white_24dp.png</normaloff>../icons/outline_file_download_white_24dp.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>24</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -1507,6 +1547,26 @@ QHeaderView::section {
                    <property name="icon">
                     <iconset>
                      <normaloff>../icons/outline_cached_white_24dp.png</normaloff>../icons/outline_cached_white_24dp.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>24</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="staff_export_button">
+                   <property name="toolTip">
+                    <string>Export</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>../icons/outline_file_download_white_24dp.png</normaloff>../icons/outline_file_download_white_24dp.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>

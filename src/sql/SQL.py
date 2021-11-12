@@ -214,7 +214,6 @@ class SQLConnection:
 
         if (self.fetchRow() == None):
             return False
-
         return True
     def getStudentName(self, id):
         query = ("SELECT sname from Student WHERE sid = %s" % (id))
@@ -237,8 +236,9 @@ class SQLConnection:
 # DELETE/INSERT/UPDATE
 #
     def deleteEntry(self, schema, *args):
+        self.commit()
         if (schema == "Enrolled"):
-            query = ("DELETE FROM %s WHERE sid = %s AND cid = %s;" % (schema, args[0], args[1]))
+            query = ("DELETE FROM %s WHERE sid = %s AND cid = '%s';" % (schema, args[0], args[1]))
         else:
             query = ("DELETE FROM %s WHERE %s = %s;" % (schema, args[0], args[1]))
         self._cursor.execute(query)
@@ -246,6 +246,7 @@ class SQLConnection:
         return
 
     def insertEntry(self, schema, record):
+        self.commit()
         if (schema == "Enrolled"):
             query = ("INSERT INTO %s VALUES (%s, '%s', %s, %s, %s);" % (schema, record[0], record[1], record[2], record[3], record[4]))
         else:
@@ -255,8 +256,9 @@ class SQLConnection:
         return
 
     def updateEntry(self, schema, record):
+        self.commit()
         if (schema == "Enrolled"):
-            query = ("UPDATE %s SET exam1 = %s, exam2 = %s, final = %s WHERE sid = %s and cid = %s;" % (schema, record[2], record[3], record[4], record[0], record[1]))
+            query = ("UPDATE %s SET exam1 = %s, exam2 = %s, final = %s WHERE sid = %s and cid = '%s';" % (schema, record[2], record[3], record[4], record[0], record[1]))
         elif (schema == "Student"):
             query = ("UPDATE %s SET sname = '%s', major = '%s', s_level = '%s', age = %s WHERE sid = %s" % (schema, record[1], record[2], record[3], record[4], record[0]))
         elif (schema == "Courses"):

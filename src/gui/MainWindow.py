@@ -4,11 +4,13 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import QColor, QIntValidator, QPalette, QRegExpValidator
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
+
 import sys
+from os import path
+import csv
+
 from sql.SQL import SQLConnection
 from gui.Flags import *
-from os import path
-
 from gui.LoginWindow import LoginWindow
 from gui.AddUpdateWindow import AddUpdateWindow
 
@@ -202,6 +204,7 @@ class MainWindow(QMainWindow):
 
         self.student_logout_button.clicked.connect(self.executeLogout)
         self.student_enroll_button.clicked.connect(self.executeEnroll)
+        self.student_withdraw_button.clicked.connect(self.executeWithdraw)
         self.student_search_button.clicked.connect(self.executeStudentSearch)
 
     def _setupFaculty(self):
@@ -251,6 +254,7 @@ class MainWindow(QMainWindow):
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
         self.faculty_logout_button.clicked.connect(self.executeLogout)
+        self.faculty_export_button.clicked.connect(self.executeExport)
         self.faculty_search_button.clicked.connect(self.executeFacultySearch)
 
     def _setupStaff(self): 
@@ -300,6 +304,7 @@ class MainWindow(QMainWindow):
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
         self.staff_logout_button.clicked.connect(self.executeLogout)
+        self.staff_export_button.clicked.connect(self.executeExport)
         self.staff_add_button.clicked.connect(self.executeAdd)
         self.staff_delete_button.clicked.connect(self.executeDelete)
         self.staff_update_button.clicked.connect(self.executeUpdate)
@@ -452,6 +457,24 @@ class MainWindow(QMainWindow):
             return
         self._loadTables()
         return
+
+    def executeWithdraw(self):
+        table = self.student_mycourses_table
+        try:
+            record = self._fetchTableRow(table)
+            if (record[4] != '' or record[5] != '' or record[6] != ''):
+                QMessageBox.warning(self, 'Error', 'Unable to Withdraw. A grade has already been posted.')
+        
+            qm = QMessageBox
+            response = qm.question(self, 'Warning', 'Are you sure you want to withdraw from this course?', qm.Yes | qm.No)
+            if response == qm.No:
+                return
+            self.database.deleteEntry('Enrolled', self.userID, record[0])
+        except:
+            QMessageBox.warning(self, 'Error', 'A row must be selected.')
+            return
+        self._loadTables()
+        return
     #
     # STAFF BUTTONS
     #
@@ -483,7 +506,7 @@ class MainWindow(QMainWindow):
         self._loadTables()
         return
 
-    def executeDelete(self): #maybe stream line with enum
+    def executeDelete(self): 
         qm = QMessageBox
         response = qm.question(self, 'Warning', 'Are you sure you want to delete this row?', qm.Yes | qm.No)
         if response == qm.No:
@@ -582,6 +605,65 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, 'Error', 'Something went wrong.')
         self._loadTables()
         return
+
+    def executeExport(self):
+        if (self.userIDType == User.STAFF):
+            curr_tab = self.staff_tabs.currentIndex()
+            if (curr_tab == 0):
+                table = self.staff_student_table
+                header = ['Student ID', 'Student Name', 'Major', 'Level', 'Age']
+            elif (curr_tab == 1):
+                table = self.staff_courses_table
+                header = ['Course ID', 'Course Name', 'Meeting Time', 'Room', 'Faculty ID', 'Capacity']
+            elif (curr_tab == 2):
+                table = self.staff_enrolled_table
+                header = ['Student ID', 'Course ID', 'Exam 1', 'Exam 2', 'Final']
+            elif (curr_tab == 3):
+                table = self.staff_faculty_table
+                header = ['Faculty ID', 'Faculty Name', 'Department ID']
+            elif (curr_tab == 4):
+                table = self.staff_staff_table
+                header = ['Staff ID', 'Staff Name', 'Department ID']
+            elif (curr_tab == 5):
+                table = self.staff_department_table
+                header = ['Department ID', 'Department Name']
+        else:
+            curr_tab = self.faculty_tabs.currentIndex()
+            if (curr_tab == 0):
+                table = self.faculty_student_table
+                header = ['Student ID', 'Student Name', 'Major', 'Level', 'Age']
+            elif (curr_tab == 1):
+                table = self.faculty_courses_table
+                header = ['Course ID', 'Course Name', 'Meeting Time', 'Room', 'Faculty ID', 'Capacity']
+            elif (curr_tab == 2):
+                table = self.faculty_enrolled_table
+                header = ['Student ID', 'Course ID', 'Exam 1', 'Exam 2', 'Final']
+            elif (curr_tab == 3):
+                table = self.faculty_faculty_table
+                header = ['Faculty ID', 'Faculty Name', 'Department ID']
+            elif (curr_tab == 4):
+                table = self.faculty_staff_table
+                header = ['Staff ID', 'Staff Name', 'Department ID']
+            elif (curr_tab == 5):
+                table = self.faculty_department_table
+                header = ['Department ID', 'Department Name']
+        try:
+            with open('exported.csv', 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile, delimiter=',', quotechar='\'', quoting=csv.QUOTE_MINIMAL)
+                writer.writerow(header)
+                for x in range(table.rowCount()):
+                    row = []
+                    for y in range(table.columnCount()):
+                        row.append(table.item(x, y).text())
+                    writer.writerow(row)
+        except:
+            QMessageBox.warning(self, 'Error', 'Unable to write to file. Is it open?')
+            self.database.cursor.fetchall() #flush cursor.
+            return
+
+        QMessageBox.information(self, 'Success', 'Data for this table has been exported.')
+        return
+
         
 #
 # EVENTS
