@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `courses`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `courses` (
   `cid` varchar(32) NOT NULL,
-  `cname` varchar(32) DEFAULT NULL,
+  `cname` varchar(128) DEFAULT NULL,
   `meets_at` varchar(64) DEFAULT NULL,
   `room` varchar(32) DEFAULT NULL,
   `fid` int DEFAULT NULL,
@@ -53,7 +53,7 @@ DROP TABLE IF EXISTS `department`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `department` (
   `did` int NOT NULL,
-  `dname` varchar(32) DEFAULT NULL,
+  `dname` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`did`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -102,7 +102,7 @@ DROP TABLE IF EXISTS `faculty`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `faculty` (
   `fid` int NOT NULL,
-  `fname` varchar(32) DEFAULT NULL,
+  `fname` varchar(128) DEFAULT NULL,
   `deptid` int DEFAULT NULL,
   PRIMARY KEY (`fid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -126,7 +126,7 @@ DROP TABLE IF EXISTS `staff`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `staff` (
   `sid` int NOT NULL,
-  `sname` varchar(32) DEFAULT NULL,
+  `sname` varchar(128) DEFAULT NULL,
   `deptid` int DEFAULT NULL,
   PRIMARY KEY (`sid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -150,7 +150,7 @@ DROP TABLE IF EXISTS `student`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `student` (
   `sid` int NOT NULL,
-  `sname` varchar(32) DEFAULT NULL,
+  `sname` varchar(128) DEFAULT NULL,
   `major` varchar(32) DEFAULT NULL,
   `s_level` varchar(32) DEFAULT NULL,
   `age` int DEFAULT NULL,

@@ -4,7 +4,7 @@ import sys
 import json
 
 #
-# By default mysql connector is set to repeatable read, and creates transactions for every execute.
+# By default mysql connector is set to repeatable read, and creates transactions for every execute. Therefore we can keep transactions exclusive by only committing work before we do anything, thus encapsulating it into one function.
 #
 
 class SQLConnection:
@@ -48,9 +48,11 @@ class SQLConnection:
                  "FROM Courses c, Department d, Faculty f, (SELECT Courses.cid, COUNT(sid) AS num FROM Courses LEFT JOIN Enrolled ON Courses.cid = Enrolled.cid GROUP BY cid) as e "
                  "WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did;")
         self._cursor.execute(query)
+        return
     def queryStudentMyCourses(self, id):
         query = ("SELECT c.cid, d.dname, c.cname, f.fname, e.exam1, e.exam2, e.final FROM Courses c, Department d, Faculty f, Enrolled e WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND e.sid = %s" % (id))
         self._cursor.execute(query)
+        return
     def searchStudentCourses(self, string):
         query = """SELECT c.cid, d.dname, c.cname, f.fname, c.meets_at, c.room, e.num, c.limit_num 
         FROM Courses c, Department d, Faculty f, (SELECT Courses.cid, COUNT(sid) AS num FROM Courses LEFT JOIN Enrolled ON Courses.cid = Enrolled.cid GROUP BY cid) as e 
@@ -76,6 +78,7 @@ class SQLConnection:
         FROM Courses c, Department d, Faculty f, (SELECT Courses.cid, COUNT(sid) AS num FROM Courses LEFT JOIN Enrolled ON Courses.cid = Enrolled.cid GROUP BY cid) as e 
         WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND c.cid = '%s';""" % (string, string, string, string, string, string)
         self._cursor.execute(query)
+        return
     def searchStudentMyCourses(self, id, string):
         query = """SELECT c.cid, d.dname, c.cname, f.fname, e.exam1, e.exam2, e.final 
         FROM Courses c, Department d, Faculty f, Enrolled e 
@@ -93,27 +96,34 @@ class SQLConnection:
         FROM Courses c, Department d, Faculty f, Enrolled e 
         WHERE c.cid = e.cid AND c.fid = f.fid AND f.deptid = d.did AND e.sid = %s AND f.fname LIKE '%s%%';""" % (id, string, id, string, id, string, id, string)
         self._cursor.execute(query)
+        return
 #
 #  Staff and Faculty Queries
 #
     def queryStudent(self):
         query = ("SELECT * FROM Student;")
         self._cursor.execute(query)
+        return
     def queryCourses(self):
         query = ("SELECT * FROM Courses;")
         self._cursor.execute(query)
+        return
     def queryEnrolled(self):
         query = ("SELECT * FROM Enrolled;")
         self._cursor.execute(query)
+        return
     def queryFaculty(self):
         query = ("SELECT * FROM Faculty;")
         self._cursor.execute(query)
+        return
     def queryStaff(self):
         query = ("SELECT * FROM Staff;")
         self._cursor.execute(query)
+        return
     def queryDepartment(self):
         query = ("SELECT * FROM Department;")
         self._cursor.execute(query)
+        return
 
     def searchStudent(self, string):
         if " " in string:
@@ -133,6 +143,7 @@ class SQLConnection:
             UNION 
             SELECT * FROM Student WHERE s_level LIKE '%s%%';""" % (string, string, string)
         self._cursor.execute(query)
+        return
     def searchCourses(self, string):
         if " " in string:
             query = """
@@ -154,6 +165,7 @@ class SQLConnection:
             UNION 
             SELECT * FROM Courses WHERE room LIKE '%s%%';""" % (string, string, string, string)
         self._cursor.execute(query)
+        return
     def searchEnrolled(self, string):
         if " " in string:
             return
@@ -165,18 +177,21 @@ class SQLConnection:
         else:
             query = """SELECT * FROM Faculty where fname LIKE '%s%%';""" % (string)
         self._cursor.execute(query)
+        return
     def searchStaff(self, string):
         if (string.isdigit()):
             query = """SELECT * FROM Staff where sid = %s UNION SELECT * FROM Staff where deptid = %s;""" % (string, string)
         else:
             query = """SELECT * FROM Staff where sname LIKE '%s%%';""" % (string)
         self._cursor.execute(query)
+        return
     def searchDepartment(self, string):
         if (string.isdigit()):
             query = "SELECT * FROM Department where did = %s;" % (string)
         else:
             query = "SELECT * FROM Department where dname LIKE '%s%%';" % (string) 
         self._cursor.execute(query)
+        return
 
 #
 # General Queries
@@ -199,6 +214,7 @@ class SQLConnection:
         if (self.fetchRow() == None):
             return False
         return True
+
     def getStudentName(self, id):
         query = ("SELECT sname from Student WHERE sid = %s" % (id))
         self._cursor.execute(query)
@@ -215,6 +231,7 @@ class SQLConnection:
     def getDepartmentNames(self):
         query = ("SELECT dname from Department")
         self._cursor.execute(query)
+        return
 
 #
 # DELETE/INSERT/UPDATE
@@ -267,8 +284,10 @@ class SQLConnection:
 
     def commit(self):
         self._cnx.commit()
+        return
 
     def closeConnection(self):
         if (self._cnx.in_transaction):
             self._cnx.commit()
         self._cnx.close()
+        return

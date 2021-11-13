@@ -71,13 +71,16 @@ class LoginWindow(QDialog):
 
     def mousePressEvent(self, event):
         self.oldPos = event.globalPos()
+        return
 
     def mouseMoveEvent(self, event):
         delta = QPoint(event.globalPos() - self.oldPos)
         self.move(self.x() + delta.x(), self.y() + delta.y())
         self.oldPos = event.globalPos()
+        return
 
     def closeEvent(self, e):
         self.database.closeConnection()
-        print("Connection Closed")
+        print("CONNECTION CLOSED IN LOGIN")
+        return
 

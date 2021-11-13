@@ -14,7 +14,8 @@ from gui.Flags import *
 from gui.LoginWindow import LoginWindow
 from gui.AddUpdateWindow import AddUpdateWindow
 
-PATH = path.dirname(path.abspath(__file__))
+# Linux support
+PATH = path.dirname(path.abspath(__file__)) 
 
 class GUI:
     _app = None
@@ -78,7 +79,7 @@ class MainWindow(QMainWindow):
 
         self.database.queryStudentCourses()
         self._populateTable(self.courses_table, 8)
-        
+    
     def _populateTable(self, table, columns):
         currRow = 0
         table.setRowCount(currRow)
@@ -96,7 +97,7 @@ class MainWindow(QMainWindow):
         self.stackedWidget.setCurrentIndex(self.userIDType.value)
         self._loadTables()
 
-    def _loadTables(self): #maybe put headers in setup
+    def _loadTables(self): 
         def loadStudent():            
             self.database.queryStudentCourses()
             self._populateTable(self.student_courses_table, 8)
@@ -152,8 +153,6 @@ class MainWindow(QMainWindow):
             self.database.queryStudentCourses()
             self._populateTable(self.courses_table, 8)
             
-        
-
     def _fetchTableRow(self, table):
         row = []
         selected = table.currentItem()
@@ -161,7 +160,8 @@ class MainWindow(QMainWindow):
             row.append(table.item(selected.row(), i).text())
         return row
 
-    #need validators here
+
+
     def _setupGuest(self):
         alpha_rx = QRegExp("^[A-Za-z0-9]+((\s)?([A-Za-z0-9])+)*$")
         self.search_bar.setValidator(QRegExpValidator(alpha_rx, self.search_bar))
@@ -310,6 +310,8 @@ class MainWindow(QMainWindow):
         self.staff_update_button.clicked.connect(self.executeUpdate)
         self.staff_search_button.clicked.connect(self.executeStaffSearch)
 
+
+
 #
 #  BUTTON METHODS
 #
@@ -329,6 +331,7 @@ class MainWindow(QMainWindow):
         
         print("EXECUTED LOGIN")
         print("Logged in as {} {}".format(self.userID, self.userName))
+        return
 
     def executeLogout(self): #
         qm = QMessageBox
@@ -344,15 +347,9 @@ class MainWindow(QMainWindow):
         self._loadTables()
 
         print("EXECUTED LOGOUT")
-
-    def undoButton(self):
-        self.database.rollback()
-        self._loadTables()
         return
 
-#
-# Search Buttons
-#
+
 
     def executeGuestSearch(self):
         string = self.search_bar.text()
@@ -361,6 +358,8 @@ class MainWindow(QMainWindow):
             return
         self.database.searchStudentCourses(string)
         self._populateTable(self.courses_table, 8)
+
+        print("EXECUTED SEARCH")
         return
 
     def executeStudentSearch(self):
@@ -375,6 +374,8 @@ class MainWindow(QMainWindow):
         elif (curr_tab == 1):
             self.database.searchStudentMyCourses(self.userID, string)
             self._populateTable(self.student_mycourses_table, 7)
+
+        print("EXECUTED SEARCH")
         return
 
     def executeStaffSearch(self, string): 
@@ -401,6 +402,7 @@ class MainWindow(QMainWindow):
         elif (curr_tab == 5):
             self.database.searchDepartment(string)
             self._populateTable(self.staff_department_table, 2)
+        print("EXECUTED SEARCH")
         return
     
     def executeFacultySearch(self, string): 
@@ -428,11 +430,10 @@ class MainWindow(QMainWindow):
         elif (curr_tab == 5):
             self.database.searchDepartment(string)
             self._populateTable(self.faculty_department_table, 2)
+        print("EXECUTED SEARCH")
         return
 
-    #
-    # Student Buttons
-    #
+
 
     def executeEnroll(self):
         table = self.student_courses_table
@@ -456,6 +457,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, 'Error', 'A row must be selected.')
             return
         self._loadTables()
+        print("EXECUTED ENROLL")
         return
 
     def executeWithdraw(self):
@@ -475,10 +477,11 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, 'Error', 'A row must be selected.')
             return
         self._loadTables()
+        print("EXECUTED WITHDRAW")
         return
-    #
-    # STAFF BUTTONS
-    #
+
+
+
     def executeAdd(self):
         curr_tab = self.staff_tabs.currentIndex()
         addWindow = AddUpdateWindow(curr_tab, Option.ADD)
@@ -505,6 +508,7 @@ class MainWindow(QMainWindow):
         except:
             QMessageBox.warning(self, 'Error', 'Something went wrong.')
         self._loadTables()
+        print("EXECUTED ADD")
         return
 
     def executeDelete(self): 
@@ -550,6 +554,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, 'Error', 'A row must be selected.')
             return
         self._loadTables()
+        print("EXECUTED DELETE")
         return
 
     def executeUpdate(self):
@@ -605,6 +610,7 @@ class MainWindow(QMainWindow):
         except:
             QMessageBox.warning(self, 'Error', 'Something went wrong.')
         self._loadTables()
+        print("EXECUTED UPDATE")
         return
 
     def executeExport(self):
@@ -649,7 +655,7 @@ class MainWindow(QMainWindow):
                 table = self.faculty_department_table
                 header = ['Department ID', 'Department Name']
         try:
-            with open('exported.csv', 'w', newline='') as csvfile:
+            with open('exported_data.csv', 'w', newline='') as csvfile:
                 writer = csv.writer(csvfile, delimiter=',', quotechar='\'', quoting=csv.QUOTE_MINIMAL)
                 writer.writerow(header)
                 for x in range(table.rowCount()):
@@ -659,19 +665,18 @@ class MainWindow(QMainWindow):
                     writer.writerow(row)
         except:
             QMessageBox.warning(self, 'Error', 'Unable to write to file. Is it open?')
-            self.database.cursor.fetchall() #flush cursor.
             return
 
         QMessageBox.information(self, 'Success', 'Data for this table has been exported.')
+        print("EXECUTED EXPORT")
         return
 
-        
 #
 # EVENTS
 #
 
     def closeEvent(self, e):
-        print("Connection Closed")
+        print("CONNECTION CLOSED IN MAIN GUI")
         self.database.closeConnection()
         print(self.userIDType)
         print(self.userName)

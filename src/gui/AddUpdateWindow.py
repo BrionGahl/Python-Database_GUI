@@ -23,7 +23,7 @@ class AddUpdateWindow(QDialog):
 
     database = None
 
-    def __init__(self, index, flag, *args): #args is for existing values for update option
+    def __init__(self, index, flag, *args):
         super(AddUpdateWindow, self).__init__()
         uic.loadUi(path.join(PATH, '../../assets/ui/AddUpdateUI.ui'), self)
         self.stackedWidget.setCurrentIndex(index)
@@ -44,7 +44,7 @@ class AddUpdateWindow(QDialog):
     def _setupValidator(self): #cap validator length
         names_rx = QRegExp("^[A-Za-z]+((\s)?([A-Za-z])+)*$") 
         course_names_rx = QRegExp("^[A-Za-z]+((\s)?([A-Za-z0-9])+)*$")
-        alpha_rx = QRegExp("^[A-Za-z0-9]+$")
+        alpha_rx = QRegExp("^[A-Za-z0-9]{1,32}$")
 
         self.student_sid.setValidator(QIntValidator(1, 100000000, self.student_sid)) #100, 199
         self.student_sname.setValidator(QRegExpValidator(names_rx, self.student_sname))
@@ -345,5 +345,5 @@ class AddUpdateWindow(QDialog):
         self.oldPos = event.globalPos()
     
     def closeEvent(self, e):
-        print("Connection Closed")
+        print("CONNECTION CLOSED IN ADD/UPDATE")
         self.database.closeConnection()
