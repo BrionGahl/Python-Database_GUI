@@ -31,7 +31,10 @@ CREATE TABLE `courses` (
   `room` varchar(32) DEFAULT NULL,
   `fid` int DEFAULT NULL,
   `limit_num` int DEFAULT NULL,
-  PRIMARY KEY (`cid`)
+  PRIMARY KEY (`cid`),
+  FOREIGN KEY (`fid`)
+	REFERENCES `faculty` (`fid`)
+    ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -80,7 +83,13 @@ CREATE TABLE `enrolled` (
   `exam1` int DEFAULT NULL,
   `exam2` int DEFAULT NULL,
   `final` int DEFAULT NULL,
-  PRIMARY KEY (`sid`,`cid`)
+  PRIMARY KEY (`sid`,`cid`),
+  FOREIGN KEY (`sid`)
+	REFERENCES `student` (`sid`)
+    ON DELETE CASCADE,
+  FOREIGN KEY (`cid`)
+	REFERENCES `courses` (`cid`)
+    ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -104,7 +113,10 @@ CREATE TABLE `faculty` (
   `fid` int NOT NULL,
   `fname` varchar(128) DEFAULT NULL,
   `deptid` int DEFAULT NULL,
-  PRIMARY KEY (`fid`)
+  PRIMARY KEY (`fid`),
+  FOREIGN KEY (`deptid`)
+	REFERENCES `department` (`did`)
+    ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -128,7 +140,10 @@ CREATE TABLE `staff` (
   `sid` int NOT NULL,
   `sname` varchar(128) DEFAULT NULL,
   `deptid` int DEFAULT NULL,
-  PRIMARY KEY (`sid`)
+  PRIMARY KEY (`sid`),
+  FOREIGN KEY (`deptid`)
+	REFERENCES `department` (`did`)
+    ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -176,4 +191,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-11-09 23:02:54
+

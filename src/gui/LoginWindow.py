@@ -62,7 +62,7 @@ class LoginWindow(QDialog):
             QMessageBox.warning(self, 'Error', 'Bad ID.')
             return
         self.database.closeConnection()
-        print("Connection Closed")
+        print("Connection CLOSED IN LOGIN")
         return
 
     def executeClose(self):
